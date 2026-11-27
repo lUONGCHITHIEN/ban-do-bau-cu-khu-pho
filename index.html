@@ -1,7 +1,15 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Bản đồ 15 điểm bầu cử khu phố</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></head><body>
-<div class="app"><aside id="side" class="sidebar"><div class="brand"><div class="logo">LT</div><div class="brandtxt"><small>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</small><h1>BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ</h1><span>Bầu cử Trưởng khu phố nhiệm kỳ 2026–2029</span></div></div>
-<div class="stats"><div><b id="coordCount">15</b><span>điểm có tọa độ</span></div><div><b>15</b><span>khu phố</span></div></div>
-<div class="search"><input id="search" placeholder="Tìm khu phố, địa chỉ..." aria-label="Tìm kiếm"><button id="clear" title="Xóa tìm kiếm">×</button></div><div class="filters"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="coords">Có tọa độ</button></div>
-<div class="listhead"><strong>Danh sách điểm bầu cử</strong><span id="count">15</span></div><div id="list" class="list"><div class="loading">Đang tải danh sách…</div></div></aside>
-<button id="toggle" aria-label="Mở danh sách khu phố" title="Mở danh sách">☰ Danh sách</button><main id="map"></main></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bản đồ 15 điểm bầu cử khu phố - Lái Thiêu</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="map"></div>
+<header class="topbar"><div class="brand-mark">LT</div><div class="brand"><small>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</small><strong>BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ</strong><span>Bầu cử Trưởng khu phố nhiệm kỳ 2026–2029</span></div><button id="listToggle" class="list-toggle">☰ <span>Danh sách khu phố</span></button></header>
+<aside id="drawer" class="drawer"><div class="drawer-head"><div><h2>Danh sách điểm bầu cử</h2><p><b>15</b> khu phố · <b>15</b> điểm tọa độ</p></div><button id="closeDrawer" class="close">×</button></div><div class="searchbar"><input id="search" placeholder="Tìm khu phố / địa điểm…"><button id="clearSearch">×</button></div><div class="list" id="list"></div></aside>
+<div class="map-controls"><button id="mapMode" title="Đổi nền bản đồ">🛰 Vệ tinh</button><button id="locate" title="Vị trí của tôi">◎</button></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
+</body></html>
