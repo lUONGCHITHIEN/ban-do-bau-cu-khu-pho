@@ -1,122 +1,18 @@
+
 [
-  {
-    "id": 1,
-    "name": "Khu phố Tây",
-    "address": "Khu phố Tây, phường Lái Thiêu",
-    "lat": 10.876407136323156,
-    "lng": 106.69612008718514,
-    "venue": "Văn phòng Khu phố Tây"
-  },
-  {
-    "id": 2,
-    "name": "Khu phố Vĩnh Phú",
-    "address": "Khu phố Vĩnh Phú, phường Lái Thiêu",
-    "lat": 10.885751522270438,
-    "lng": 106.69662730517221,
-    "venue": "Văn phòng Khu phố Vĩnh Phú"
-  },
-  {
-    "id": 3,
-    "name": "Khu phố Long Thới",
-    "address": "Khu phố Long Thới, phường Lái Thiêu",
-    "lat": 10.90180742108323,
-    "lng": 106.6994672171841,
-    "venue": "Văn phòng Khu phố Long Thới"
-  },
-  {
-    "id": 4,
-    "name": "Khu phố Hòa Long",
-    "address": "Khu phố Hòa Long, phường Lái Thiêu",
-    "lat": 10.889986664256268,
-    "lng": 106.70111094427688,
-    "venue": "Văn phòng Khu phố Hòa Long"
-  },
-  {
-    "id": 5,
-    "name": "Khu phố Nguyễn Trãi",
-    "address": "Khu phố Nguyễn Trãi, phường Lái Thiêu",
-    "lat": 10.902404320516261,
-    "lng": 106.70520441165449,
-    "venue": "Văn phòng Khu phố Nguyễn Trãi"
-  },
-  {
-    "id": 6,
-    "name": "Khu phố Chợ",
-    "address": "Khu phố Chợ, phường Lái Thiêu",
-    "lat": 10.903975660397565,
-    "lng": 106.69815306867224,
-    "venue": "Văn phòng Khu phố Chợ"
-  },
-  {
-    "id": 7,
-    "name": "Khu phố Bình Đức 1",
-    "address": "Khu phố Bình Đức 1, phường Lái Thiêu",
-    "lat": 10.90541713585694,
-    "lng": 106.69839246722789,
-    "venue": "Văn phòng Khu phố Bình Đức 1"
-  },
-  {
-    "id": 8,
-    "name": "Khu phố Bình Đức 2",
-    "address": "Khu phố Bình Đức 2, phường Lái Thiêu",
-    "lat": 10.908746104516728,
-    "lng": 106.69653966724684,
-    "venue": "Văn phòng Khu phố Bình Đức 2"
-  },
-  {
-    "id": 9,
-    "name": "Khu phố Bình Hòa",
-    "address": "Khu phố Bình Hòa, phường Lái Thiêu",
-    "lat": 10.918472457880995,
-    "lng": 106.71109283788044,
-    "venue": "Văn phòng Khu phố Bình Hòa"
-  },
-  {
-    "id": 10,
-    "name": "Khu phố Đông Nhì",
-    "address": "Khu phố Đông Nhì, phường Lái Thiêu",
-    "lat": 10.907390927850985,
-    "lng": 106.7083366614026,
-    "venue": "Văn phòng Khu phố Đông Nhì"
-  },
-  {
-    "id": 11,
-    "name": "Khu phố Đông Tư",
-    "address": "Khu phố Đông Tư, phường Lái Thiêu",
-    "lat": 10.916629066039674,
-    "lng": 106.70246479407608,
-    "venue": "Văn phòng Khu phố Đông Tư"
-  },
-  {
-    "id": 12,
-    "name": "Khu phố Bình Thuận",
-    "address": "Khu phố Bình Thuận, phường Lái Thiêu",
-    "lat": 10.925924886793004,
-    "lng": 106.68535404001115,
-    "venue": "Văn phòng Khu phố Bình Thuận"
-  },
-  {
-    "id": 13,
-    "name": "Khu phố Bình Nhâm",
-    "address": "Khu phố Bình Nhâm, phường Lái Thiêu",
-    "lat": 10.934938506778733,
-    "lng": 106.69985178855553,
-    "venue": "Văn phòng Khu phố Bình Nhâm"
-  },
-  {
-    "id": 14,
-    "name": "Khu phố Bình Phước",
-    "address": "Khu phố Bình Phước, phường Lái Thiêu",
-    "lat": 10.91938888888889,
-    "lng": 106.69522222222221,
-    "venue": "Văn phòng Khu phố Bình Phước"
-  },
-  {
-    "id": 15,
-    "name": "Khu phố Bình Đức",
-    "address": "Khu phố Bình Đức, phường Lái Thiêu",
-    "lat": 10.916429322611153,
-    "lng": 106.69166063900626,
-    "venue": "Văn phòng Khu phố Bình Đức"
-  }
+  {"id":1,"name":"Khu phố Chợ","vote":1,"lat":10.903975660397565,"lng":106.69815306867224},
+  {"id":2,"name":"Khu phố Bình Đức","vote":2,"lat":10.916429322611153,"lng":106.69166063900626},
+  {"id":3,"name":"Khu phố Bình Đức 1","vote":3,"lat":10.90541713585694,"lng":106.69839246722789},
+  {"id":4,"name":"Khu phố Bình Đức 2","vote":4,"lat":10.908746104516728,"lng":106.69653966724684},
+  {"id":5,"name":"Khu phố Bình Phước","vote":5,"lat":10.91938888888889,"lng":106.69522222222221},
+  {"id":6,"name":"Khu phố Bình Nhâm","vote":6,"lat":10.934938506778733,"lng":106.69985178855553},
+  {"id":7,"name":"Khu phố Bình Hòa","vote":7,"lat":10.918472457880995,"lng":106.71109283788044},
+  {"id":8,"name":"Khu phố Bình Thuận","vote":8,"lat":10.925924886793004,"lng":106.68535404001115},
+  {"id":9,"name":"Khu phố Hòa Long","vote":9,"lat":10.889986664256268,"lng":106.70111094427688},
+  {"id":10,"name":"Khu phố Long Thới","vote":10,"lat":10.90180742108323,"lng":106.6994672171841},
+  {"id":11,"name":"Khu phố Vĩnh Phú","vote":11,"lat":10.885751522270438,"lng":106.69662730517221},
+  {"id":12,"name":"Khu phố Tây","vote":12,"lat":10.876407136323156,"lng":106.69612008718514},
+  {"id":13,"name":"Khu phố Đông Tư","vote":13,"lat":10.916629066039674,"lng":106.70246479407608},
+  {"id":14,"name":"Khu phố Đông Nhì","vote":14,"lat":10.907390927850985,"lng":106.7083366614026},
+  {"id":15,"name":"Khu phố Nguyễn Trãi","vote":15,"lat":10.902404320516261,"lng":106.70520441165449}
 ]
