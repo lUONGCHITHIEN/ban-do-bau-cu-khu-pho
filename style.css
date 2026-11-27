@@ -39,3 +39,41 @@
   .detail h3{font-size:16px}.detail p{font-size:12px}.routebtn{font-size:13px;padding:13px 12px}
   .legend{display:none!important}
 }
+/* Mobile compact layout: reduce UI footprint so content fits small screens */
+@media(max-width:540px){
+  .header{height:64px;padding:6px 8px;gap:7px}
+  .logo{width:34px;height:34px;font-size:13px;border-width:2px}
+  .agency{font-size:8px;letter-spacing:0}
+  h1{font-size:12px;line-height:1.15;margin:2px 0}
+  .layout{height:calc(100dvh - 64px);height:calc(100vh - 64px)}
+  .mobile-list-toggle{top:8px;left:8px;padding:8px 10px;font-size:11px;border-radius:9px}
+  .mapbuttons{top:8px;right:6px;padding:3px;border-radius:8px}
+  .mapbuttons button{padding:6px 7px;font-size:9px;border-radius:6px}
+  .status{top:48px;left:8px;font-size:9px;padding:6px 8px;max-width:58%}
+  .stats{padding:5px 7px;gap:5px}
+  .stats div{padding:5px 7px;border-radius:8px}
+  .stats b{font-size:16px}
+  .stats span{font-size:9px;line-height:1.15}
+  .search{margin:0 8px 6px;border-radius:8px}
+  .search input{padding:8px 9px;font-size:11px}
+  .search button{width:30px;font-size:16px}
+  .filterbar{gap:4px;padding:0 8px 6px}
+  .filterbar button{padding:6px 8px;font-size:9px;border-radius:7px}
+  .listheader{padding:6px 9px;font-size:10px}
+  .listheader span{padding:2px 6px;font-size:9px}
+  .list{padding:5px}
+  .wardrow{gap:7px;padding:7px 8px;margin-bottom:4px;border-radius:8px}
+  .dot{width:10px;height:10px}
+  .wardinfo strong{font-size:10.5px;margin-bottom:2px}
+  .wardinfo small{font-size:9px;line-height:1.2}
+  .coordtag{font-size:8px;padding:3px 4px}
+  .side-actions{gap:4px;padding:5px}
+  .side-actions button{padding:6px 4px;font-size:9px;border-radius:7px}
+  .detail.open{bottom:8px;left:8px;right:8px;max-height:44dvh;padding:12px 11px 12px;border-radius:14px}
+  .detail h3{font-size:14px;margin-bottom:7px}
+  .detail p{font-size:10.5px;line-height:1.35;margin:6px 0}
+  .routebtn{font-size:11px;padding:10px 8px;border-radius:8px}
+  .close{font-size:20px;top:6px;right:7px}
+  .leaflet-control-zoom{margin:8px!important}
+  .leaflet-control-zoom a{width:26px!important;height:26px!important;line-height:26px!important}
+}
