@@ -1,16 +1,16 @@
 
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bản đồ số 15 khu phố - Lái Thiêu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bản đồ số 15 khu phố - Lái Thiêu</title>
 
-  <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
-  <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="./style.css?v=10">
 </head>
+
 <body>
 
 <header id="header">
@@ -38,7 +38,9 @@
           </div>
         </div>
 
-        <input id="search" type="search" placeholder="Tìm khu phố..." autocomplete="off">
+        <input id="search" type="search"
+          placeholder="Tìm khu phố..."
+          autocomplete="off">
 
         <div class="filters">
           <button class="active" data-filter="all">Tất cả</button>
@@ -55,8 +57,8 @@
     </div>
   </aside>
 
-  <!-- NÚT ĐÓNG MỞ ĐỘC LẬP SIDEBAR -->
-  <button id="toggleList" type="button" title="Thu gọn danh sách">‹</button>
+  <button id="toggleList" type="button"
+    title="Thu gọn danh sách">‹</button>
 
   <section id="mapWrap">
 
@@ -68,13 +70,16 @@
 
     <div id="map"></div>
 
-    <div id="boundaryStatus">Đang tải dữ liệu...</div>
+    <div id="boundaryStatus">
+      Đang tải dữ liệu...
+    </div>
 
   </section>
+
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="./script.js"></script>
+<script src="./script.js?v=10"></script>
 
 </body>
 </html>
