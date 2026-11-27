@@ -23,11 +23,18 @@ function markerPopup(p){const w=nameOf(p);return `<div class="election-popup"><d
 function showWardPopup(w){
  const p=pointFor(w); if(!p||!hasCoord(p)){openWard(w,false);return;}
  highlightWard(w); renderList($('search').value);
- const ll=L.latLng(Number(p.lat),Number(p.lng));
- map.closePopup(); map.setView(ll, Math.max(map.getZoom(),16), {animate:false}); map.invalidateSize();
- const popup=L.popup({maxWidth:300,minWidth:270,autoPan:true,closeButton:true,closeOnClick:false,offset:[0,-8],className:'election-popup-shell'}).setLatLng(ll).setContent(markerPopup(p));
- popup.openOn(map);
- const node=popup.getElement(); if(node){const more=node.querySelector('.ep-more');if(more)more.onclick=()=>openWard(w,false);}
+ const marker=markerByWard.get(w);
+ if(!marker){openWard(w,false);return;}
+ const ll=L.latLng(+p.lat,+p.lng);
+ map.closePopup();
+ map.setView(ll,Math.max(map.getZoom(),16),{animate:false});
+ map.invalidateSize();
+ // Use the popup attached to the actual marker instead of creating a detached popup.
+ marker.openPopup();
+ const popup=marker.getPopup();
+ const bindMore=()=>{const more=popup?.getElement()?.querySelector('.ep-more');if(more)more.onclick=()=>openWard(w,false);};
+ marker.once('popupopen',bindMore);
+ bindMore();
 }
 function showMarkerPopup(p){const w=nameOf(p);showWardPopup(w);}
 
