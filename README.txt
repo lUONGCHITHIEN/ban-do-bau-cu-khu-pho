@@ -4,10 +4,13 @@ Du lieu goc:
 - 15 diem bau cu, so diem 1-15 va GPS theo file nguoi dung cung cap.
 - Diem 3: ghi chu goc "ke ben Nha truyen thong thi xa Thuan An".
 - Ten truong/ten dia diem cho cac diem con khong co trong file toa do; khong tu dien ten sai.
-- boundaries.geojson hiện có 15 polygon phân vùng tham khảo (Voronoi), KHÔNG phải ranh chính thức khu phố/phường.
+- boundaries.geojson có 15 polygon phân vùng tham khảo (Voronoi), KHÔNG phải ranh chính thức khu phố/phường.
+- Các vùng được tô màu khác nhau, có nhãn tên khu phố trên bản đồ.
+- Bấm vào vùng hoặc khu phố trong danh sách để mở chi tiết và làm nổi vùng đang chọn; rê chuột làm sáng vùng.
 
 Tinh nang:
 - 15 marker co so diem tren ban do
+- 15 vùng phân màu, nhãn cố định, hover làm sáng và click để chọn/highlight khu phố
 - Danh sach khu pho, loc va tim kiem
 - Popup marker va the chi tiet co Google Maps chi duong
 - Nen ban do duong, ve tinh, dia hinh
@@ -20,3 +23,6 @@ RANH GIỚI: boundaries.geojson gồm 15 polygon phân vùng tham khảo (Vorono
 
 
 Ranh giới hành chính phường Lái Thiêu: nút “Ranh phường nguồn” chỉ mở trang https://tphcm.city.com.vn/lai-thieu trong tab mới. Website chưa nhập/chồng polygon ranh chính thức từ trang nguồn. Vì vậy nút nguồn KHÔNG có nghĩa ranh chính thức đã được hiển thị trên bản đồ Leaflet.
+
+
+V5.3: Added gold perimeter outline for Lái Thiêu as a visual reference. The outline is a convex hull derived from the 15 supplied election-point coordinates, NOT the official administrative polygon. The official ward boundary and surrounding wards polygons have not been imported.
