@@ -1,37 +1,5 @@
 <!doctype html>
-<html lang="vi">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Bản đồ 15 điểm bầu cử khu phố | Lái Thiêu</title>
-  <meta name="description" content="Bản đồ tra cứu 15 điểm bầu cử theo khu phố phường Lái Thiêu">
-  <link rel="preconnect" href="https://unpkg.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><link rel="preconnect" href="https://server.arcgisonline.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand-mark">LT</div>
-      <div class="brand-copy"><span>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</span><h1>BẢN ĐỒ ĐIỂM BẦU CỬ KHU PHỐ</h1><small>Bầu cử Trưởng khu phố nhiệm kỳ 2026–2029</small></div>
-      <button class="mobile-list-toggle" id="listToggle" aria-expanded="false"><span class="hamb">☰</span><span>Danh sách khu phố</span></button>
-      <button class="overview-btn" id="overviewBtn" title="Xem toàn bộ 15 điểm">⤢ <span>Toàn bộ điểm</span></button>
-    </header>
-    <main class="main-layout">
-      <aside class="side-panel" id="sidePanel" aria-label="Danh sách khu phố">
-        <div class="panel-head"><div><h2>Tra cứu khu phố</h2><p>Chọn khu phố để xem vị trí trên bản đồ</p></div><button id="closeList" class="icon-btn mobile-only" aria-label="Đóng danh sách">×</button></div>
-        <div class="stats"><div class="stat"><strong id="pointCount">15</strong><span>điểm bầu cử</span></div><div class="stat"><strong>15</strong><span>khu phố</span></div></div>
-        <div class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Tìm khu phố hoặc địa chỉ"><button id="clearSearch" aria-label="Xóa tìm kiếm">×</button></div>
-        <div class="filters" role="group" aria-label="Lọc điểm"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="gps">Có tọa độ</button></div>
-        <div class="list-heading"><h3>15 khu phố</h3><span id="shownCount">15</span></div>
-        <div id="pointList" class="point-list" aria-live="polite"></div>
-        <div class="panel-footer"><button id="locateBtn" class="secondary-btn">◎ Vị trí của tôi</button><button id="exportBtn" class="secondary-btn">↓ Xuất CSV</button></div>
-      </aside>
-      <div class="map-stage"><div id="map" aria-label="Bản đồ các điểm bầu cử"></div>
-        <div class="map-tools"><button class="layer-btn" id="layerBtn">▧ <span>Lớp bản đồ</span></button><div class="layer-menu" id="layerMenu"><button data-layer="street" class="selected">Bản đồ đường</button><button data-layer="satellite">Vệ tinh</button><button data-layer="terrain">Địa hình</button></div></div>
-        <div class="map-caption"><span class="legend-dot"></span> Điểm bầu cử <span class="caption-divider">•</span> <span id="mapStatus">15 điểm có tọa độ</span></div>
-      </div>
-    </main>
-  </div>
-  <div id="drawerBackdrop" class="drawer-backdrop"></div>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
-</body></html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0b4e91"><title>Bản đồ 15 điểm bầu cử khu phố - Lái Thiêu</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="style.css"></head>
+<body><header class="topbar"><div class="brandmark">LT</div><div class="brand"><small>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</small><h1>BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ</h1><p>Bầu cử Trưởng khu phố nhiệm kỳ 2026–2029</p></div><div class="topbadge">🗳️ THÔNG TIN BẦU CỬ</div></header>
+<div class="app"><aside class="panel" id="sidebar"><div class="panelhead"><div class="stat"><strong id="gpsCount">15</strong><span>điểm có tọa độ</span></div><div class="stat"><strong>15</strong><span>khu phố</span></div></div><div class="searchbox"><input id="search" type="search" placeholder="Tìm khu phố, địa chỉ..." aria-label="Tìm khu phố"><button id="clear" aria-label="Xóa tìm kiếm">×</button></div><div class="filters"><button data-filter="all" class="on">Tất cả</button><button data-filter="coords">Có tọa độ</button><button id="locFilter" data-filter="near">Gần tôi</button></div><div class="listtitle">Danh sách điểm bầu cử <span id="countBadge">15</span></div><div id="wardList" class="wardlist"></div><div class="panelbottom"><button id="locate">⌖ Định vị tôi</button><button id="export">⇩ Xuất Excel/CSV</button></div></aside><div class="maparea"><div id="map"></div><button id="drawerToggle" class="drawerbtn" aria-expanded="false">☰ Danh sách 15 khu phố</button><div id="shade" class="shade"></div><div class="layers"><button data-layer="road">Bản đồ</button><button data-layer="sat" class="active">Vệ tinh</button><button data-layer="terrain">Địa hình</button></div><div class="mapstatus" id="status">Đang nạp dữ liệu…</div><div class="maplegend"><span class="legenddot"></span> Điểm bầu cử <span class="legendline"></span> Ranh giới (khi có dữ liệu chính xác)</div></div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script></body></html>
