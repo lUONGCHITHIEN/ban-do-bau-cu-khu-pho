@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bản đồ 15 điểm bầu cử khu phố - Lái Thiêu</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="logo">LT</div><div class="brand"><div class="agency">ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</div><h1>BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ</h1></div></header>
+<main class="layout"><aside class="sidepanel"><div class="stats"><div class="stat"><b id="coordCount">15</b><span>điểm có tọa độ</span></div><div class="stat"><b>15</b><span>khu phố</span></div></div>
+<div class="searchbox"><input id="search" type="search" placeholder="Tìm khu phố, địa chỉ…" autocomplete="off"><button id="clearSearch" title="Xóa tìm kiếm">×</button></div>
+<div class="filterbar"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="located">Có tọa độ</button><button class="filter" data-filter="near">Gần tôi</button></div>
+<div class="listhead"><strong>Danh sách điểm bầu cử</strong><span id="rowCount">15</span><button id="collapseList" class="collapse-btn" type="button" aria-label="Thu gọn danh sách" title="Thu gọn danh sách">‹</button></div><div id="wardList" class="wardlist"></div><div id="status" class="status" aria-live="polite"></div></aside>
+<section class="mapsection"><div id="map"></div><div class="layerpicker" role="group" aria-label="Lớp bản đồ"><button data-layer="street">Bản đồ</button><button data-layer="satellite" class="chosen">Vệ tinh</button><button data-layer="terrain">Địa hình</button></div></section></main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
+</body></html>
