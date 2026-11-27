@@ -3,8 +3,8 @@ const wards=['Khu phố Chợ','Khu phố Bình Đức','Khu phố Bình Đức 
 const colors=['#e53935','#1e88e5','#43a047','#f9a825','#8e24aa','#00897b','#ef6c00','#3949ab','#c2185b','#6d4c41','#039be5','#7cb342','#546e7a','#ab47bc','#fb8c00'];
 let points=[],markers=L.layerGroup(),boundaryLayer=null,outlineLayer=null,wardLayers={},userMarker=null,userPosition=null,activeFilter='all',selectedWard=null;
 const map=L.map('map',{zoomControl:false}).setView([10.9075,106.699],14);
-const street=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
+const street=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
+const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'}).addTo(map);
 const terrain=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenTopoMap'});
 L.control.zoom({position:'topleft'}).addTo(map);markers.addTo(map);
 const $=id=>document.getElementById(id),list=$('list'),detail=$('detail'),detailContent=$('detailContent');
