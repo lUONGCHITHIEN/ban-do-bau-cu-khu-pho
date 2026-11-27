@@ -1,21 +1,15 @@
-BẢN DEMO — BẢN ĐỒ SỐ ĐIỂM BẦU CỬ KHU PHỐ
+BẢN ĐỒ ĐIỂM BẦU CỬ KHU PHỐ - PHƯỜNG LÁI THIÊU
 
 Cấu trúc:
-- index.html: trang chính
-- style.css: giao diện
-- script.js: bản đồ, ghim, tìm kiếm, thông tin chi tiết, chỉ đường
-- data/points.json: dữ liệu 15 điểm demo
+- index.html: giao diện
+- style.css: thiết kế
+- script.js: chức năng bản đồ
+- data/points.json: dữ liệu điểm bầu cử
+- data/boundaries.geojson: ranh phường/khu phố
 
-LƯU Ý:
-Tên khu phố và tọa độ trong points.json là dữ liệu mô phỏng, không phải địa điểm bầu cử thật.
+Dùng GitHub Pages:
+1. Upload tất cả file và thư mục lên repo, giữ nguyên thư mục data.
+2. Settings > Pages > Deploy from branch > main > /(root) > Save.
+3. Chờ workflow Pages build xong, mở URL GitHub Pages.
 
-Chạy thử tại máy:
-Không mở index.html trực tiếp bằng file:// vì script tải points.json. Dùng VS Code Live Server hoặc chạy Python:
-  python -m http.server 8000
-Sau đó mở http://localhost:8000
-
-Đưa lên GitHub Pages:
-1. Tạo repo mới (ví dụ ban-do-bau-cu-khu-pho).
-2. Upload toàn bộ các file và thư mục trong gói này lên repo, giữ nguyên cấu trúc.
-3. Settings > Pages > Deploy from a branch > Branch main > Folder / (root) > Save.
-4. Chờ GitHub Pages cấp link.
+Lưu ý: Chưa có tọa độ điểm và ranh giới chính xác. Màn hình hiện danh sách 15 khu phố, bản đồ nền tương tác; dữ liệu điểm và ranh sẽ hiển thị sau khi nạp vào JSON.

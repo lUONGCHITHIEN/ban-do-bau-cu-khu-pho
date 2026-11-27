@@ -1,38 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bản đồ số điểm bầu cử khu phố — Demo</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bản đồ điểm bầu cử khu phố - Phường Lái Thiêu</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
-  <main class="app">
-    <aside class="places-panel">
-      <div class="panel-heading">
-        <h1>Điểm bầu cử khu phố</h1>
-        <p>Chọn một địa điểm để xem trên bản đồ</p>
-      </div>
-      <div class="search-wrap">
-        <input id="search" type="search" placeholder="Tìm khu phố hoặc điểm bầu cử…" aria-label="Tìm điểm bầu cử" />
-      </div>
-      <div class="list-meta"><span id="count">15 điểm bầu cử</span><span class="demo-tag">TỌA ĐỘ ĐÃ CUNG CẤP</span></div>
-      <ul id="place-list" class="place-list"></ul>
-    </aside>
-    <section class="map-wrap" aria-label="Bản đồ 15 điểm bầu cử theo tọa độ cung cấp">
-      <div id="map"></div>
-      <div class="map-chip"><span class="dot"></span> 15 điểm bầu cử theo tọa độ</div>
-    </section>
-    <aside class="detail-panel" id="detail-panel">
-      <div class="detail-empty">
-        <div class="empty-icon">⌖</div>
-        <h2>Thông tin địa điểm</h2>
-        <p>Chọn một điểm trong danh sách hoặc nhấn ghim trên bản đồ để xem chi tiết.</p>
-      </div>
-    </aside>
+<header class="hero">
+  <div class="brand"><div class="seal">LT</div><div><div class="org">UBND PHƯỜNG LÁI THIÊU</div><h1>ĐIỂM BẦU CỬ KHU PHỐ</h1><div class="subtitle">Phục vụ công tác bầu cử Trưởng khu phố nhiệm kỳ 2026 – 2029</div></div></div>
+  <div class="ballot"><span class="star">★</span><b>BẦU CỬ</b><small>TRƯỞNG KHU PHỐ</small></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="list-title"><span class="pin-icon">📍</span><strong>Danh sách điểm bầu cử</strong><span class="count" id="pointCount">0 điểm</span></div>
+    <div class="search-row"><input id="search" placeholder="Tìm theo tên khu phố, địa điểm…"><button id="filterBtn" title="Bộ lọc">☷</button></div>
+    <div class="tabs"><button class="active" data-filter="all">Tất cả (15)</button><button data-filter="ward">Theo khu phố</button><button data-filter="near">Gần tôi</button></div>
+    <div id="pointList" class="point-list"></div>
+    <div class="sidebar-footer">Bản đồ thông tin điểm bầu cử khu phố</div>
+  </aside>
+  <main class="map-area">
+    <div id="map"></div>
+    <div class="map-controls"><button id="mapView" class="active">Bản đồ</button><button id="satView">Vệ tinh</button><button id="terrainView">Địa hình</button></div>
+    <div class="legend"><span><i class="red-dot"></i> Điểm bầu cử</span><span><i class="yellow-area"></i> Khu vực khu phố (chờ dữ liệu ranh)</span></div>
+    <div class="detail-card" id="detailCard"><button class="close" id="closeDetail">×</button><h3>Thông tin điểm bầu cử</h3><p class="muted">Chọn một điểm trong danh sách hoặc trên bản đồ để xem chi tiết.</p></div>
   </main>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
+</body></html>
