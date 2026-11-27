@@ -2,10 +2,10 @@
 'use strict';
 const wards=['Khu phố Chợ','Khu phố Bình Đức','Khu phố Bình Đức 1','Khu phố Bình Đức 2','Khu phố Bình Phước','Khu phố Bình Nhâm','Khu phố Bình Hòa','Khu phố Bình Thuận','Khu phố Hòa Long','Khu phố Long Thới','Khu phố Vĩnh Phú','Khu phố Tây','Khu phố Đông Tư','Khu phố Đông Nhì','Khu phố Nguyễn Trãi'];
 const palette=['#e53935','#1e88e5','#43a047','#f9a825','#8e24aa','#00897b','#ef6c00','#3949ab','#c2185b','#6d4c41','#039be5','#7cb342','#546e7a','#ab47bc','#fb8c00'];
-const map=L.map('map',{zoomControl:true}).setView([10.9075,106.699],14);
-const street=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
-const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
-const terrain=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:'© OpenTopoMap'}); satellite.addTo(map);
+const map=L.map('map',{zoomControl:true,attributionControl:false}).setView([10.9075,106.699],14);
+const street=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:''});
+const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:''});
+const terrain=L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,attribution:''}); satellite.addTo(map);
 L.control.layers({'Bản đồ':street,'Vệ tinh':satellite,'Địa hình':terrain},{},{position:'topright'}).addTo(map);
 const markerLayer=L.layerGroup().addTo(map),$=id=>document.getElementById(id);let points=[],markerById=new Map(),userPosition=null,userMarker=null,filter='all',selectedId=null;
 function coordOk(p){return p&&Number.isFinite(+p.lat)&&Number.isFinite(+p.lng)&&+p.lat>=-90&&+p.lat<=90&&+p.lng>=-180&&+p.lng<=180;}
@@ -24,7 +24,6 @@ const boundaryUrl='https://raw.githubusercontent.com/thanglequoc/vietnamese-prov
 $('search').addEventListener('input',renderList);$('clearSearch').addEventListener('click',()=>{$('search').value='';renderList();$('search').focus();});document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{filter=btn.dataset.filter;document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b===btn));if(filter==='near'&&!userPosition){locate();return;}renderList();}));
 $('closePanel').addEventListener('click',()=>{$('infoPanel').hidden=true;});
 function locate(){if(!navigator.geolocation){alert('Trình duyệt không hỗ trợ GPS.');return;}navigator.geolocation.getCurrentPosition(pos=>{userPosition=[pos.coords.latitude,pos.coords.longitude];if(userMarker)map.removeLayer(userMarker);userMarker=L.circleMarker(userPosition,{radius:8,color:'#fff',weight:2,fillColor:'#1677db',fillOpacity:1}).addTo(map).bindPopup('Vị trí của bạn');map.flyTo(userPosition,15);filter='near';document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter==='near'));renderList();},()=>alert('Không lấy được vị trí. Hãy cấp quyền GPS và sử dụng HTTPS/localhost.'),{enableHighAccuracy:true,timeout:15000,maximumAge:30000});}
-$('locate').addEventListener('click',locate);
-$('export').addEventListener('click',()=>{const rows=[['STT','Khu phố','Địa điểm','Địa chỉ','Latitude','Longitude'],...points.map(p=>[p.id,p.name,p.venue||'',p.address||'',p.lat,p.lng])];const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Danh-sach-15-diem-bau-cu.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
-const modal=$('modal');$('electionInfo').addEventListener('click',()=>modal.hidden=false);$('closeModal').addEventListener('click',()=>modal.hidden=true);modal.addEventListener('click',e=>{if(e.target===modal)modal.hidden=true;});init();
+
+init();
 })();
