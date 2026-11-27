@@ -1,22 +1,11 @@
-BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ - SOURCE BUILD MỚI
+BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ - BỘ MÃ NGUỒN MỚI
 
-Files:
+Các file cần đặt cùng thư mục gốc repository GitHub Pages:
 - index.html
 - style.css
 - script.js
-- points.json (15 records)
+- points.json
 
-Deploy:
-1. Upload all 4 files into the GitHub Pages publishing root.
-2. Keep filenames exactly as above.
-3. Commit and wait for Pages deployment.
-
-Current functionality:
-- 15 point markers and details popups
-- Search/filter list, desktop sidebar, mobile drawer
-- Road/satellite/topographic layers
-- Geolocation, Google Maps directions
-- CSV export
-
-Boundary polygon:
-This build intentionally does NOT draw a fake rectangular boundary. An accurate official polygon still needs to be obtained and verified before overlaying it.
+Bản mới dùng dữ liệu tọa độ 15 khu phố hiện có; không tái sử dụng code giao diện cũ.
+Có responsive mobile/desktop, cột danh sách thu gọn, tìm kiếm, lọc, định vị, CSV export,
+marker số, popup thông tin, Google Maps chỉ đường và 3 nền bản đồ.\nRanh giới địa giới màu vàng không được dựng giả. Chưa kèm polygon địa giới đã xác minh chính thức.
