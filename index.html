@@ -3,54 +3,46 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bản đồ 15 điểm bầu cử khu phố - Lái Thiêu</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bản đồ 15 điểm bầu cử - Lái Thiêu</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 *{box-sizing:border-box}
-html,body{
- margin:0;width:100%;height:100%;
- font-family:"Times New Roman",serif;color:#17345c
-}
+html,body{margin:0;width:100%;height:100%;font-family:"Times New Roman",serif;color:#17345c}
 body{overflow:hidden;background:#eaf1f8}
 
 #header{
- height:72px;background:#1763b7;color:white;
+ height:72px;background:#1763b7;color:#fff;
  display:flex;align-items:center;padding:10px 18px;gap:12px;
- box-shadow:0 2px 8px #0002;position:relative;z-index:500
+ position:relative;z-index:10
 }
 .logo{
  width:44px;height:44px;border-radius:50%;background:white;color:#1261b6;
- display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;
- flex-shrink:0
+ display:flex;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0
 }
-.header-text small{display:block;font-weight:bold;font-size:12px}
+.header-text small{display:block;font-size:12px;font-weight:bold}
 .header-text strong{display:block;font-size:23px}
 
-#main{display:flex;height:calc(100vh - 72px);width:100%}
+#main{display:flex;width:100%;height:calc(100vh - 72px)}
 
 #sidebar{
- width:290px;min-width:290px;background:#fff;
+ width:290px;min-width:290px;background:white;
  display:flex;flex-direction:column;border-right:1px solid #cbd9ea;
  transition:width .28s,min-width .28s;
- position:relative;z-index:400;
- overflow:visible;
+ overflow:hidden;position:relative;z-index:5
 }
 #sidebar.collapsed{
  width:0!important;min-width:0!important;
- overflow:visible!important;border:0!important;
+ border:0!important;overflow:hidden!important
 }
-#sidebar.collapsed > *:not(#collapseBtn){
- display:none!important;
-}
+#sidebar.collapsed>*{display:none!important}
 
 #sideTop{padding:10px;flex-shrink:0}
 .stats{display:flex;gap:7px}
 .stat{
- flex:1;background:#f2f7ff;border:1px solid #d6e5f7;border-radius:12px;
- padding:8px 10px
+ flex:1;background:#f2f7ff;border:1px solid #d6e5f7;
+ border-radius:12px;padding:8px 10px
 }
 .stat b{font-size:22px;color:#1265c5;display:block}
 .stat small{font-size:12px}
@@ -64,43 +56,53 @@ body{overflow:hidden;background:#eaf1f8}
  border:1px solid #d6e2f0;background:#f3f7fc;border-radius:8px;
  padding:6px 9px;font-family:inherit;cursor:pointer
 }
-.filters button.active{background:#1765c4;color:white;border-color:#1765c4}
+.filters button.active{background:#1765c4;color:white}
 
-.listTitle{
- padding:8px 10px;font-size:14px;font-weight:bold;border-bottom:1px solid #e2eaf3
-}
+.listTitle{padding:9px 10px;font-size:14px;font-weight:bold;border-bottom:1px solid #e2eaf3}
 #list{overflow-y:auto;flex:1;padding:6px}
-
 .item{
  border:1px solid #d8e4f1;border-radius:10px;margin-bottom:6px;
  padding:9px;display:flex;gap:8px;align-items:center;cursor:pointer;background:white
 }
-.item:hover{background:#f4f8ff;border-color:#78a9ee}
+.item:hover{background:#f4f8ff}
 .item.selected{background:#edf5ff;border-color:#2679df}
-
-.dot{
- width:12px;height:12px;border-radius:50%;flex-shrink:0;
- border:1px solid #fff;box-shadow:0 0 0 1px #aaa
-}
+.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .itemName{font-weight:bold;font-size:14px}
 .itemDesc{font-size:12px;color:#526982;margin-top:3px}
 
-#collapseBtn{
- position:absolute;right:-30px;top:50%;transform:translateY(-50%);
- width:30px;height:58px;background:#1765b7;color:white;
- border:2px solid white;border-left:0;border-radius:0 10px 10px 0;
- cursor:pointer;z-index:9999;font-family:"Times New Roman",serif;
- font-size:24px;font-weight:bold;box-shadow:2px 3px 8px #0003;
- display:flex;align-items:center;justify-content:center;
-}
-#sidebar.collapsed #collapseBtn{right:-30px}
-
-#mapWrap{position:relative;flex:1;min-width:0}
+#mapWrap{position:relative;flex:1;min-width:0;z-index:1}
 #map{width:100%;height:100%}
 
+/* NÚT THU GỌN ĐỘC LẬP - NẰM TRÊN BẢN ĐỒ */
+#toggleList{
+ position:absolute;
+ left:0;
+ top:50%;
+ transform:translateY(-50%);
+ width:34px;
+ height:64px;
+ border:2px solid #fff;
+ border-left:0;
+ border-radius:0 12px 12px 0;
+ background:#1765b7;
+ color:#fff;
+ font-family:"Times New Roman",serif;
+ font-size:28px;
+ font-weight:bold;
+ cursor:pointer;
+ z-index:99999;
+ box-shadow:2px 3px 10px rgba(0,0,0,.35);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+#toggleList:hover{background:#0b4c95}
+
+/* Bộ chuyển bản đồ */
 #mapControls{
- position:absolute;right:12px;top:12px;z-index:1000;background:white;
- padding:5px;border-radius:10px;box-shadow:0 2px 8px #0003;display:flex;gap:3px
+ position:absolute;right:12px;top:12px;z-index:1000;
+ background:white;padding:5px;border-radius:10px;
+ box-shadow:0 2px 8px #0003;display:flex;gap:3px
 }
 #mapControls button{
  border:0;background:white;padding:8px 10px;border-radius:7px;
@@ -108,6 +110,7 @@ body{overflow:hidden;background:#eaf1f8}
 }
 #mapControls button.active{background:#1765c4;color:white}
 
+/* Popup */
 .leaflet-popup-content-wrapper{
  border-radius:14px!important;padding:0!important;overflow:hidden;
  box-shadow:0 8px 30px #0003!important
@@ -120,14 +123,14 @@ body{overflow:hidden;background:#eaf1f8}
 }
 .popBody{padding:12px 14px}
 .popLine{padding:8px 0;border-bottom:1px solid #edf1f6;font-size:14px;line-height:1.4}
-.popLine:last-of-type{border-bottom:0}
 .routeBtn{
  display:block;text-align:center;margin-top:10px;padding:11px;
- background:#1765c4;color:#fff!important;text-decoration:none!important;
+ background:#1765c4;color:white!important;text-decoration:none!important;
  font-size:15px;font-weight:bold;border-radius:9px
 }
 .routeBtn:hover{background:#0c4d9e}
 
+/* Marker */
 .marker{
  width:30px;height:30px;border-radius:50%;color:white;border:3px solid white;
  box-shadow:0 2px 5px #0005;display:flex;align-items:center;justify-content:center;
@@ -141,7 +144,6 @@ body{overflow:hidden;background:#eaf1f8}
  #main{height:calc(100vh - 62px)}
  #sidebar{width:250px;min-width:250px}
  #sidebar.collapsed{width:0!important;min-width:0!important}
- .item{padding:8px}
  #mapControls{right:6px;top:6px}
  #mapControls button{padding:7px 6px;font-size:12px}
  .leaflet-popup-content{width:245px!important}
@@ -164,11 +166,11 @@ body{overflow:hidden;background:#eaf1f8}
  <aside id="sidebar">
   <div id="sideTop">
    <div class="stats">
-    <div class="stat"><b>15</b><small>điểm có tọa độ</small></div>
+    <div class="stat"><b>15</b><small>điểm bầu cử</small></div>
     <div class="stat"><b>15</b><small>khu phố</small></div>
    </div>
 
-   <input id="search" placeholder="Tìm khu phố, địa chỉ..." autocomplete="off">
+   <input id="search" placeholder="Tìm khu phố..." autocomplete="off">
 
    <div class="filters">
     <button class="active" data-filter="all">Tất cả</button>
@@ -177,22 +179,20 @@ body{overflow:hidden;background:#eaf1f8}
    </div>
   </div>
 
-  <div class="listTitle">
-   Danh sách điểm bầu cử <span id="count">15</span>
-  </div>
-
+  <div class="listTitle">Danh sách điểm bầu cử <span id="count">15</span></div>
   <div id="list"></div>
-
-  <!-- Nút thu gọn luôn được giữ lại -->
-  <button id="collapseBtn" title="Thu gọn danh sách">‹</button>
  </aside>
 
  <div id="mapWrap">
+  <!-- NÚT NÀY KHÔNG NẰM TRONG SIDEBAR -->
+  <button id="toggleList" title="Thu gọn danh sách">‹</button>
+
   <div id="mapControls">
    <button data-layer="street">Bản đồ</button>
    <button class="active" data-layer="sat">Vệ tinh</button>
    <button data-layer="terrain">Địa hình</button>
   </div>
+
   <div id="map"></div>
  </div>
 
@@ -201,25 +201,25 @@ body{overflow:hidden;background:#eaf1f8}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ===============================
-   DỮ LIỆU 15 KHU PHỐ
-================================ */
+/* =========================
+   15 KHU PHỐ
+========================= */
 const points=[
-{id:1,name:"Khu phố Tây",vote:1,lat:10.876407136323156,lng:106.69612008718514},
-{id:2,name:"Khu phố Vĩnh Phú",vote:2,lat:10.885751522270438,lng:106.69662730517221},
-{id:3,name:"Khu phố Long Thới",vote:3,lat:10.90180742108323,lng:106.6994672171841},
-{id:4,name:"Khu phố Hòa Long",vote:4,lat:10.889986664256268,lng:106.70111094427688},
-{id:5,name: "Khu phố Nguyễn Trãi",vote:5,lat:10.902404320516261,lng:106.70520441165449},
-{id:6,name:"Khu phố Chợ",vote:6,lat:10.903975660397565,lng:106.69815306867224},
-{id:7,name:"Khu phố Bình Đức 1",vote:7,lat:10.90541713585694,lng:106.69839246722789},
-{id:8,name:"Khu phố Bình Đức 2",vote:8,lat:10.908746104516728,lng:106.69653966724684},
-{id:9,name:"Khu phố Bình Hòa",vote:9,lat:10.918472457880995,lng:106.71109283788044},
-{id:10,name:"Khu phố Đông Nhì",vote:10,lat:10.907390927850985,lng:106.7083366614026},
-{id:11,name:"Khu phố Đông Tư",vote:11,lat:10.916629066039674,lng:106.70246479407608},
-{id:12,name:"Khu phố Bình Thuận",vote:12,lat:10.925924886793004,lng:106.68535404001115},
-{id:13,name:"Khu phố Bình Nhâm",vote:13,lat:10.934938506778733,lng:106.69985178855553},
-{id:14,name:"Khu phố Bình Phước",vote:14,lat:10.91938888888889,lng:106.69522222222221},
-{id:15,name:"Khu phố Bình Đức",vote:15,lat:10.916429322611153,lng:106.69166063900626}
+{id:1,name:"Khu phố Chợ",vote:1,lat:10.903975660397565,lng:106.69815306867224},
+{id:2,name:"Khu phố Bình Đức",vote:2,lat:10.916429322611153,lng:106.69166063900626},
+{id:3,name:"Khu phố Bình Đức 1",vote:3,lat:10.90541713585694,lng:106.69839246722789},
+{id:4,name:"Khu phố Bình Đức 2",vote:4,lat:10.908746104516728,lng:106.69653966724684},
+{id:5,name:"Khu phố Bình Phước",vote:5,lat:10.91938888888889,lng:106.69522222222221},
+{id:6,name:"Khu phố Bình Nhâm",vote:6,lat:10.934938506778733,lng:106.69985178855553},
+{id:7,name:"Khu phố Bình Hòa",vote:7,lat:10.918472457880995,lng:106.71109283788044},
+{id:8,name:"Khu phố Bình Thuận",vote:8,lat:10.925924886793004,lng:106.68535404001115},
+{id:9,name:"Khu phố Hòa Long",vote:9,lat:10.889986664256268,lng:106.70111094427688},
+{id:10,name:"Khu phố Long Thới",vote:10,lat:10.90180742108323,lng:106.6994672171841},
+{id:11,name:"Khu phố Vĩnh Phú",vote:11,lat:10.885751522270438,lng:106.69662730517221},
+{id:12,name:"Khu phố Tây",vote:12,lat:10.876407136323156,lng:106.69612008718514},
+{id:13,name:"Khu phố Đông Tư",vote:13,lat:10.916629066039674,lng:106.70246479407608},
+{id:14,name:"Khu phố Đông Nhì",vote:14,lat:10.907390927850985,lng:106.7083366614026},
+{id:15,name:"Khu phố Nguyễn Trãi",vote:15,lat:10.902404320516261,lng:106.70520441165449}
 ];
 
 const colors=[
@@ -228,9 +228,9 @@ const colors=[
  "#1c8e86","#4058b9","#009c88","#925f4c","#1685db"
 ];
 
-/* ===============================
-   KHỞI TẠO BẢN ĐỒ
-================================ */
+/* =========================
+   BẢN ĐỒ
+========================= */
 const map=L.map("map",{zoomControl:true}).setView([10.9095,106.6995],13);
 
 const street=L.tileLayer(
@@ -250,54 +250,37 @@ const terrain=L.tileLayer(
 
 sat.addTo(map);
 
-/* ===============================
-   RANH GIỚI GEOJSON
-================================ */
+/* =========================
+   RANH GIỚI PHƯỜNG
+   Chỉ tải ward-outline.geojson
+========================= */
 let boundaryLayer=null;
 
-const boundaryFiles=[
- "boundary.geojson",
- "boundaries.geojson",
- "ward-outline.geojson"
-];
+fetch("./ward-outline.geojson")
+.then(r=>{
+ if(!r.ok)throw new Error("Không tải được GeoJSON");
+ return r.json();
+})
+.then(data=>{
+ boundaryLayer=L.geoJSON(data,{
+  style:{
+   color:"#FFD700",
+   weight:4,
+   opacity:1,
+   fill:false,
+   fillOpacity:0
+  },
+  interactive:false
+ }).addTo(map);
+})
+.catch(e=>console.error("Lỗi ranh giới:",e));
 
-(async()=>{
- for(const file of boundaryFiles){
-  try{
-   const response=await fetch(file);
-   if(!response.ok)continue;
-
-   const data=await response.json();
-   if(!data.features || !data.features.length)continue;
-
-   boundaryLayer=L.geoJSON(data,{
-    style:()=>({
-     color:"#ffcc00",
-     weight:5,
-     opacity:1,
-     fillOpacity:0
-    }),
-    interactive:false
-   }).addTo(map);
-
-   break;
-  }catch(error){
-   console.warn("Không tải được lớp ranh:",file,error);
-  }
- }
-})();
-
-/* ===============================
+/* =========================
    MARKER
-================================ */
+========================= */
 function makeMarker(p){
- const html=`
-  <div class="marker" style="background:${colors[p.id-1]}">
-   ${p.vote}
-  </div>`;
-
  return L.divIcon({
-  html:html,
+  html:`<div class="marker" style="background:${colors[p.id-1]}">${p.vote}</div>`,
   className:"",
   iconSize:[30,30],
   iconAnchor:[15,15]
@@ -308,28 +291,15 @@ function popupHTML(p){
  return `
  <div class="popup">
   <div class="popHead">
-   <span style="color:${colors[p.id-1]}">●</span>
-   ${p.name}
+   <span style="color:${colors[p.id-1]}">●</span>${p.name}
   </div>
-
   <div class="popBody">
-   <div class="popLine">
-    <b>Điểm bầu cử số ${p.vote}</b>
-   </div>
-
-   <div class="popLine">
-    <b>Địa chỉ:</b> ${p.name}, phường Lái Thiêu
-   </div>
-
-   <div class="popLine">
-    <b>GPS:</b> ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}
-   </div>
-
-   <a class="routeBtn"
-    target="_blank"
-    rel="noopener"
-    href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}">
-    📍 Chỉ đường đi tới điểm bầu cử
+   <div class="popLine"><b>Điểm bầu cử số ${p.vote}</b></div>
+   <div class="popLine"><b>Địa điểm:</b> ${p.name}, phường Lái Thiêu</div>
+   <div class="popLine"><b>GPS:</b> ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}</div>
+   <a class="routeBtn" target="_blank" rel="noopener"
+   href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}">
+   📍 Chỉ đường đi tới điểm bầu cử
    </a>
   </div>
  </div>`;
@@ -339,22 +309,14 @@ const markers={};
 
 points.forEach(p=>{
  const marker=L.marker([p.lat,p.lng],{icon:makeMarker(p)}).addTo(map);
-
- marker.bindPopup(popupHTML(p),{
-  autoPan:true,
-  closeButton:true
- });
-
- marker.on("click",()=>{
-  selectPoint(p);
- });
-
+ marker.bindPopup(popupHTML(p),{autoPan:true});
+ marker.on("click",()=>selectPoint(p));
  markers[p.id]=marker;
 });
 
-/* ===============================
-   CHỌN KHU PHỐ
-================================ */
+/* =========================
+   CHỌN ĐIỂM
+========================= */
 let selectedId=null;
 
 function selectPoint(p){
@@ -364,16 +326,14 @@ function selectPoint(p){
   el.classList.toggle("selected",Number(el.dataset.id)===p.id);
  });
 
- map.flyTo([p.lat,p.lng],16,{duration:1.1});
+ map.flyTo([p.lat,p.lng],16,{duration:1});
 
- setTimeout(()=>{
-  if(markers[p.id])markers[p.id].openPopup();
- },850);
+ setTimeout(()=>markers[p.id].openPopup(),850);
 }
 
-/* ===============================
+/* =========================
    DANH SÁCH
-================================ */
+========================= */
 function renderList(){
  const q=document.getElementById("search").value.trim().toLowerCase();
  const filter=document.querySelector(".filters button.active").dataset.filter;
@@ -409,27 +369,16 @@ function renderList(){
   };
  });
 }
-
-/* ===============================
-   GPS / GẦN TÔI
-================================ */
-function dist(a,b){
- const R=6371;
- const dLat=(a.lat-b.lat)*Math.PI/180;
- const dLng=(a.lng-b.lng)*Math.PI/180;
-
- const s=Math.sin(dLat/2)**2+
-  Math.cos(a.lat*Math.PI/180)*
-  Math.cos(b.lat*Math.PI/180)*
-  Math.sin(dLng/2)**2;
-
- return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
-}
-
-window.userPos=null;
-
 renderList();
 
+/* =========================
+   TÌM KIẾM
+========================= */
+document.getElementById("search").oninput=renderList;
+
+/* =========================
+   FILTER
+========================= */
 document.querySelectorAll(".filters button").forEach(btn=>{
  btn.onclick=()=>{
   document.querySelectorAll(".filters button").forEach(b=>b.classList.remove("active"));
@@ -437,25 +386,34 @@ document.querySelectorAll(".filters button").forEach(btn=>{
 
   if(btn.dataset.filter==="near"){
    navigator.geolocation.getCurrentPosition(pos=>{
-    window.userPos={
-     lat:pos.coords.latitude,
-     lng:pos.coords.longitude
-    };
+    window.userPos={lat:pos.coords.latitude,lng:pos.coords.longitude};
     renderList();
    },()=>{
-    alert("Không lấy được vị trí GPS. Vui lòng cấp quyền vị trí.");
+    alert("Không lấy được vị trí. Hãy cấp quyền GPS.");
    });
   }
-
   renderList();
  };
 });
 
-document.getElementById("search").oninput=renderList;
+/* =========================
+   GPS
+========================= */
+window.userPos=null;
 
-/* ===============================
-   CHUYỂN LỚP BẢN ĐỒ
-================================ */
+function dist(a,b){
+ const R=6371;
+ const dLat=(a.lat-b.lat)*Math.PI/180;
+ const dLng=(a.lng-b.lng)*Math.PI/180;
+ const s=Math.sin(dLat/2)**2+
+ Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*
+ Math.sin(dLng/2)**2;
+ return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
+}
+
+/* =========================
+   LỚP BẢN ĐỒ
+========================= */
 document.querySelectorAll("#mapControls button").forEach(btn=>{
  btn.onclick=()=>{
   document.querySelectorAll("#mapControls button").forEach(b=>b.classList.remove("active"));
@@ -463,43 +421,35 @@ document.querySelectorAll("#mapControls button").forEach(btn=>{
 
   const layer=btn.dataset.layer;
 
-  map.eachLayer(l=>{
-   if(l!==boundaryLayer && l instanceof L.TileLayer){
-    map.removeLayer(l);
-   }
+  [street,sat,terrain].forEach(l=>{
+   if(map.hasLayer(l))map.removeLayer(l);
   });
 
   ({street,sat,terrain})[layer].addTo(map);
  };
 });
 
-/* ===============================
-   NÚT THU GỌN / MỞ DANH SÁCH
-================================ */
+/* =========================
+   THU GỌN / MỞ DANH SÁCH
+   NÚT ĐỘC LẬP TRÊN MAP
+========================= */
 const sidebar=document.getElementById("sidebar");
-const collapseBtn=document.getElementById("collapseBtn");
+const toggleList=document.getElementById("toggleList");
 
-collapseBtn.onclick=()=>{
+toggleList.addEventListener("click",()=>{
  const collapsed=sidebar.classList.toggle("collapsed");
 
- collapseBtn.innerHTML=collapsed?"›":"‹";
- collapseBtn.title=collapsed?"Mở danh sách khu phố":"Thu gọn danh sách";
+ toggleList.innerHTML=collapsed?"›":"‹";
+ toggleList.title=collapsed?"Mở danh sách khu phố":"Thu gọn danh sách";
 
- setTimeout(()=>{
-  map.invalidateSize();
- },320);
-};
-
-/* ===============================
-   ĐẢM BẢO MAP RESIZE
-================================ */
-window.addEventListener("resize",()=>{
- map.invalidateSize();
+ setTimeout(()=>map.invalidateSize(),350);
 });
 
-setTimeout(()=>{
- map.invalidateSize();
-},400);
+/* =========================
+   RESIZE
+========================= */
+window.addEventListener("resize",()=>map.invalidateSize());
+setTimeout(()=>map.invalidateSize(),500);
 </script>
 
 </body>
