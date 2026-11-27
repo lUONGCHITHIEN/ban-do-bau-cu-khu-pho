@@ -5,8 +5,8 @@
     "address": "Khu phố Tây, phường Lái Thiêu",
     "lat": 10.876407136323156,
     "lng": 106.69612008718514,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 1 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 2,
@@ -14,8 +14,8 @@
     "address": "Khu phố Vĩnh Phú, phường Lái Thiêu",
     "lat": 10.885751522270438,
     "lng": 106.69662730517221,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 2 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 3,
@@ -23,8 +23,8 @@
     "address": "Khu phố Long Thới, phường Lái Thiêu",
     "lat": 10.90180742108323,
     "lng": 106.6994672171841,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Kế bên Nhà truyền thống thị xã Thuận An",
+    "note": "Tài liệu gốc ghi vị trí: kế bên Nhà truyền thống thị xã Thuận An."
   },
   {
     "id": 4,
@@ -32,8 +32,8 @@
     "address": "Khu phố Hòa Long, phường Lái Thiêu",
     "lat": 10.889986664256268,
     "lng": 106.70111094427688,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 4 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 5,
@@ -41,8 +41,8 @@
     "address": "Khu phố Nguyễn Trãi, phường Lái Thiêu",
     "lat": 10.902404320516261,
     "lng": 106.70520441165449,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 5 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 6,
@@ -50,8 +50,8 @@
     "address": "Khu phố Chợ, phường Lái Thiêu",
     "lat": 10.903975660397565,
     "lng": 106.69815306867224,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 6 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 7,
@@ -59,8 +59,8 @@
     "address": "Khu phố Bình Đức 1, phường Lái Thiêu",
     "lat": 10.90541713585694,
     "lng": 106.69839246722789,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 7 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 8,
@@ -68,8 +68,8 @@
     "address": "Khu phố Bình Đức 2, phường Lái Thiêu",
     "lat": 10.908746104516728,
     "lng": 106.69653966724684,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 8 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 9,
@@ -77,8 +77,8 @@
     "address": "Khu phố Bình Hòa, phường Lái Thiêu",
     "lat": 10.918472457880995,
     "lng": 106.71109283788044,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 9 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 10,
@@ -86,8 +86,8 @@
     "address": "Khu phố Đông Nhì, phường Lái Thiêu",
     "lat": 10.907390927850985,
     "lng": 106.7083366614026,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 10 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 11,
@@ -95,8 +95,8 @@
     "address": "Khu phố Đông Tư, phường Lái Thiêu",
     "lat": 10.916629066039674,
     "lng": 106.70246479407608,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 11 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 12,
@@ -104,8 +104,8 @@
     "address": "Khu phố Bình Thuận, phường Lái Thiêu",
     "lat": 10.925924886793004,
     "lng": 106.68535404001115,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 12 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 13,
@@ -113,8 +113,8 @@
     "address": "Khu phố Bình Nhâm, phường Lái Thiêu",
     "lat": 10.934938506778733,
     "lng": 106.69985178855553,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 13 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 14,
@@ -122,8 +122,8 @@
     "address": "Khu phố Bình Phước, phường Lái Thiêu",
     "lat": 10.91938888888889,
     "lng": 106.69522222222221,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 14 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   },
   {
     "id": 15,
@@ -131,7 +131,7 @@
     "address": "Khu phố Bình Đức, phường Lái Thiêu",
     "lat": 10.916429322611153,
     "lng": 106.69166063900626,
-    "venue": "Chưa cập nhật tên địa điểm cụ thể",
-    "note": "Tọa độ lấy từ danh sách người dùng cung cấp. Tên địa điểm cụ thể chưa có trong tài liệu."
+    "venue": "Điểm bầu cử số 15 (theo tọa độ GPS)",
+    "note": "Tọa độ điểm bầu cử được lấy từ tài liệu người dùng cung cấp."
   }
 ]
