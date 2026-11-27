@@ -1,1 +1,44 @@
-{"type": "FeatureCollection", "name": "Outer outline estimate from 15 point coordinates", "features": [{"type": "Feature", "properties": {"name": "Đường viền địa bàn tham khảo", "type": "ước tính từ 15 tọa độ điểm"}, "geometry": {"type": "Polygon", "coordinates": [[[106.69612008718514, 10.876407136323156], [106.68535404001115, 10.925924886793004], [106.69985178855553, 10.934938506778733], [106.71109283788044, 10.918472457880995], [106.7083366614026, 10.907390927850985], [106.69612008718514, 10.876407136323156]]]}}]}
+{
+  "type": "FeatureCollection",
+  "name": "Ranh phủ vàng tham khảo - hull GPS 15 điểm",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Địa bàn Lái Thiêu (ranh tham khảo)",
+        "type": "Tạm dựng từ GPS 15 điểm, không phải ranh hành chính chính thức"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              106.69612008718514,
+              10.876407136323156
+            ],
+            [
+              106.68535404001115,
+              10.925924886793004
+            ],
+            [
+              106.69985178855553,
+              10.934938506778733
+            ],
+            [
+              106.71109283788044,
+              10.918472457880995
+            ],
+            [
+              106.7083366614026,
+              10.907390927850985
+            ],
+            [
+              106.69612008718514,
+              10.876407136323156
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
