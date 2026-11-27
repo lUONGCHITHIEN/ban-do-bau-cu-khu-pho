@@ -19,9 +19,10 @@ function renderList(query=''){list.innerHTML='';query=query.toLocaleLowerCase('v
 function highlightWard(w){selectedWard=w;markers.bringToFront();}
 function openWard(w,fly=true){highlightWard(w);renderList($('search').value);const p=pointFor(w),idx=indexOfWard(w);let html=`<h3><i class="dot" style="display:inline-block;background:${colors[idx]};vertical-align:middle;margin-right:8px"></i>${esc(w)}</h3><p><b>Đơn vị:</b> Phường Lái Thiêu</p>`;
  if(p){html+=`<p class="point-number"><b>🗳️ Điểm bầu cử số ${esc(p.id)}</b></p><p><b>Địa điểm:</b> ${esc(p.venue||p.place||'Chưa cập nhật tên địa điểm cụ thể')}</p><p><b>Địa chỉ:</b> ${esc(p.address||w+', phường Lái Thiêu')}</p><p><b>Tọa độ GPS:</b> ${(+p.lat).toFixed(6)}, ${(+p.lng).toFixed(6)}</p><p class="note">${esc(p.note||'Tọa độ điểm do người dùng cung cấp.')}</p>${hasCoord(p)?`<a class="routebtn" target="_blank" rel="noopener" href="${routeUrl(p)}">🧭 Chỉ đường đi tới điểm bầu cử</a>`:''}`;}else{html+='<p class="note">Chưa có tọa độ cho khu phố này trong dữ liệu.</p>';}detailContent.innerHTML=html;detail.classList.add('open');detail.removeAttribute('hidden');detail.setAttribute('aria-live','polite');if(p&&hasCoord(p)&&fly){map.flyTo([+p.lat,+p.lng],16,{duration:.6});}}
-function markerPopup(p){return ''; }
 function showWardPopup(w){
- // Selecting a neighborhood from the list should open the information panel directly.
+ // List selection: center the map on its marker and open the information panel directly.
+ const p=pointFor(w), marker=markerByWard.get(w);
+ if(marker){ map.closePopup(); marker.closePopup(); }
  openWard(w,true);
 }
 function showMarkerPopup(p){const w=nameOf(p);showWardPopup(w);}
