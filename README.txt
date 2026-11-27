@@ -26,3 +26,5 @@ Ranh giới hành chính phường Lái Thiêu: nút “Ranh phường nguồn�
 
 
 V5.3: Added gold perimeter outline for Lái Thiêu as a visual reference. The outline is a convex hull derived from the 15 supplied election-point coordinates, NOT the official administrative polygon. The official ward boundary and surrounding wards polygons have not been imported.
+
+V5.8: Removed the old 15-neighborhood polygon overlay and its legend/partition label. The official ward outline layer remains loaded directly over the existing map.
