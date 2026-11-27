@@ -21,20 +21,8 @@ function openWard(w,fly=true){highlightWard(w);renderList($('search').value);con
  if(p){html+=`<p class="point-number"><b>🗳️ Điểm bầu cử số ${esc(p.id)}</b></p><p><b>Địa điểm:</b> ${esc(p.venue||p.place||'Chưa cập nhật tên địa điểm cụ thể')}</p><p><b>Địa chỉ:</b> ${esc(p.address||w+', phường Lái Thiêu')}</p><p><b>Tọa độ GPS:</b> ${(+p.lat).toFixed(6)}, ${(+p.lng).toFixed(6)}</p><p class="note">${esc(p.note||'Tọa độ điểm do người dùng cung cấp.')}</p>${hasCoord(p)?`<a class="routebtn" target="_blank" rel="noopener" href="${routeUrl(p)}">↗ CHỈ ĐƯỜNG ĐẾN ĐIỂM BẦU CỬ</a>`:''}`;}else{html+='<p class="note">Chưa có tọa độ cho khu phố này trong dữ liệu.</p>';}detailContent.innerHTML=html;detail.classList.add('open');detail.style.display='block';detail.style.visibility='visible';detail.style.opacity='1';detail.style.pointerEvents='auto';detail.style.zIndex='2000';detail.setAttribute('aria-live','polite');if(p&&hasCoord(p)&&fly)map.flyTo([+p.lat,+p.lng],16,{duration:.6});}
 function markerPopup(p){const w=nameOf(p);return `<div class="election-popup"><div class="ep-title">Điểm bầu cử ${esc(w)}</div><div class="ep-sub"><span class="ep-dot"></span>${esc(w)}</div><div class="ep-photo-placeholder">🗳️<span>ĐIỂM BẦU CỬ KHU PHỐ</span></div><div class="ep-info"><div>📍 <b>Địa điểm:</b> ${esc(p.venue||p.place||'Chưa cập nhật tên địa điểm')}</div><div>📌 <b>Địa chỉ:</b> ${esc(p.address||w+', phường Lái Thiêu')}</div><div>🧭 <b>GPS:</b> ${(+p.lat).toFixed(6)}, ${(+p.lng).toFixed(6)}</div></div><div class="ep-actions"><a class="ep-route" target="_blank" rel="noopener" href="${routeUrl(p)}">➤ Chỉ đường</a><button type="button" class="ep-more" data-ward="${esc(w)}">ⓘ Xem chi tiết</button></div></div>`;}
 function showWardPopup(w){
- const p=pointFor(w); if(!p||!hasCoord(p)){openWard(w,false);return;}
- highlightWard(w); renderList($('search').value);
- const marker=markerByWard.get(w);
- if(!marker){openWard(w,false);return;}
- const ll=L.latLng(+p.lat,+p.lng);
- map.closePopup();
- map.setView(ll,Math.max(map.getZoom(),16),{animate:false});
- map.invalidateSize();
- // Use the popup attached to the actual marker instead of creating a detached popup.
- marker.openPopup();
- const popup=marker.getPopup();
- const bindMore=()=>{const more=popup?.getElement()?.querySelector('.ep-more');if(more)more.onclick=()=>openWard(w,false);};
- marker.once('popupopen',bindMore);
- bindMore();
+ // Selecting a neighborhood from the list should open the information panel directly.
+ openWard(w,true);
 }
 function showMarkerPopup(p){const w=nameOf(p);showWardPopup(w);}
 
@@ -42,7 +30,7 @@ window.closeElectionPopup=()=>map.closePopup();window.showElectionDetail=w=>open
 
 function switchLayer(layer,id){[street,satellite,terrain].forEach(l=>map.removeLayer(l));layer.addTo(map);document.querySelectorAll('.mapbuttons button').forEach(b=>b.classList.toggle('active',b.id===id));setTimeout(()=>map.invalidateSize(),80);}
 async function load(){try{const response=await fetch('points.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const data=await response.json();points=Array.isArray(data)?data:[];}catch(err){points=[];$('status').textContent='Không tải được points.json — kiểm tra file và đường dẫn GitHub Pages.';console.error(err);renderList();return;}
- markers.clearLayers();const bounds=[];points.forEach((p,i)=>{if(!hasCoord(p))return;const idx=indexOfWard(nameOf(p)),marker=L.marker([+p.lat,+p.lng],{icon:L.divIcon({className:'election-marker',html:`<span style="background:${colors[idx]}">${esc(p.id)}</span>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(markers);marker.bindTooltip('Điểm bầu cử số '+esc(p.id)+' · '+esc(nameOf(p)),{direction:'top',offset:[0,-10]});marker.bindPopup(markerPopup(p),{maxWidth:300,autoPan:true,closeButton:true});marker.on('popupopen',e=>{const more=e.popup.getElement()?.querySelector('.ep-more');if(more)more.onclick=()=>openWard(nameOf(p),false);});markerByWard.set(nameOf(p),marker);marker.on('click',()=>{highlightWard(nameOf(p));renderList($('search').value);});bounds.push([+p.lat,+p.lng]);});
+ markers.clearLayers();const bounds=[];points.forEach((p,i)=>{if(!hasCoord(p))return;const idx=indexOfWard(nameOf(p)),marker=L.marker([+p.lat,+p.lng],{icon:L.divIcon({className:'election-marker',html:`<span style="background:${colors[idx]}">${esc(p.id)}</span>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(markers);marker.bindTooltip('Điểm bầu cử số '+esc(p.id)+' · '+esc(nameOf(p)),{direction:'top',offset:[0,-10]});markerByWard.set(nameOf(p),marker);marker.on('click',()=>openWard(nameOf(p),false));bounds.push([+p.lat,+p.lng]);});
  // Load verified administrative boundary (unit code 25966) directly on the existing map.
  const officialWardGeoJsonUrl='https://raw.githubusercontent.com/thanglequoc/vietnamese-provinces-database/master/json/geojson/79_ho_chi_minh/wards/25966_lai_thieu.geojson';
  try{const outlineRes=await fetch(officialWardGeoJsonUrl,{cache:'force-cache'});if(!outlineRes.ok)throw Error('HTTP '+outlineRes.status);const outlineData=await outlineRes.json();if(outlineData?.features?.length){outlineLayer=L.geoJSON(outlineData,{style:{color:'#ffcc00',weight:7,opacity:1,lineCap:'round',lineJoin:'round',fillColor:'#ffcc00',fillOpacity:0.035},interactive:false}).addTo(map);outlineLayer.bringToFront();markers.bringToFront();map.fitBounds(outlineLayer.getBounds(),{padding:[24,24]});}}catch(e){console.warn('Không tải được GeoJSON ranh phường',e);$('status').textContent='Đã nạp điểm; không tải được polygon ranh phường — kiểm tra kết nối mạng.';}
