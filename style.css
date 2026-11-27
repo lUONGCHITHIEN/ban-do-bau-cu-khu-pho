@@ -18,6 +18,7 @@
 .routebtn{display:block;text-align:center;width:100%;font-size:12px;padding:12px 10px}
 @media(max-width:540px){.detail.open{right:8px;left:8px;top:10px;width:auto;max-width:calc(100% - 16px);max-height:calc(100% - 20px);z-index:3000}}
 
-/* V5.20: information panel visibility and layout */
-#detail[hidden]{display:none!important}
-#detail.detail.open,#detail.open{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+
+/* V5.21: panel display controlled by class only; no hidden-attribute conflict */
+#detail.detail{display:none;visibility:hidden;opacity:0;pointer-events:none}
+#detail.detail.open{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important}
