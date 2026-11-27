@@ -4,79 +4,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bản đồ điểm bầu cử phường Lái Thiêu</title>
-
+<title>Bản đồ 15 điểm bầu cử khu phố - Lái Thiêu</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 *{box-sizing:border-box}
 html,body{width:100%;height:100%;margin:0;font-family:"Times New Roman",serif}
-body{overflow:hidden;color:#183b62;background:#eef4fb}
+body{overflow:hidden;background:#eef4fb;color:#173b61}
 
 /* HEADER */
 #header{
- height:72px;background:#1764b5;color:white;
+ height:72px;background:#1764b5;color:#fff;
  display:flex;align-items:center;gap:12px;padding:8px 16px;
- position:relative;z-index:20;
- box-shadow:0 2px 8px rgba(0,0,0,.15)
+ position:relative;z-index:20;box-shadow:0 2px 8px #0002
 }
 .logo{
- width:46px;height:46px;background:#fff;color:#1764b5;
- border-radius:50%;display:flex;align-items:center;justify-content:center;
+ width:46px;height:46px;border-radius:50%;background:#fff;color:#1764b5;
+ display:flex;align-items:center;justify-content:center;
  font-size:18px;font-weight:bold;flex-shrink:0
 }
-.headerText small{font-size:12px;font-weight:bold;display:block}
-.headerText strong{font-size:23px;display:block}
+.headerText small{display:block;font-size:12px;font-weight:bold}
+.headerText strong{display:block;font-size:23px}
 
 /* MAIN */
 #main{
- position:relative;width:100%;height:calc(100vh - 72px);
- display:flex;overflow:hidden
+ position:relative;display:flex;width:100%;
+ height:calc(100vh - 72px);overflow:hidden
 }
 
 /* SIDEBAR */
 #sidebar{
  width:290px;min-width:290px;height:100%;background:white;
- display:flex;flex-direction:column;overflow:hidden;
  border-right:1px solid #d3dfed;
- position:relative;z-index:5;
- transition:width .25s ease,min-width .25s ease
-}
-#main.listClosed #sidebar{
- width:0;min-width:0;border:0
+ display:flex;flex-direction:column;overflow:hidden;
+ transition:width .25s ease,min-width .25s ease;
+ position:relative;z-index:5
 }
 #sidebarContent{
  width:290px;min-width:290px;height:100%;
  display:flex;flex-direction:column;overflow:hidden
 }
+#main.listClosed #sidebar{
+ width:0!important;min-width:0!important;border:0!important
+}
+
 #sidebarTop{padding:10px}
 .stats{display:flex;gap:8px}
 .stat{
- flex:1;padding:9px;background:#f2f7ff;border:1px solid #d7e6f7;
- border-radius:10px
+ flex:1;padding:9px;background:#f2f7ff;
+ border:1px solid #d7e6f7;border-radius:10px
 }
 .stat strong{display:block;font-size:22px;color:#1765b5}
 .stat small{font-size:12px;color:#526981}
 
 #search{
  width:100%;height:38px;margin-top:10px;padding:0 10px;
- border:1px solid #ccdbea;border-radius:9px;font-family:inherit;font-size:15px
+ border:1px solid #ccdbea;border-radius:9px;
+ font-family:inherit;font-size:15px
 }
 .filters{display:flex;gap:5px;margin-top:8px}
 .filters button{
  flex:1;padding:7px 4px;border:1px solid #d2deed;background:#f5f8fc;
  border-radius:8px;font-family:inherit;cursor:pointer;font-size:13px
 }
-.filters button.active{background:#1765b5;color:white;border-color:#1765b5}
+.filters button.active{background:#1764b5;color:white;border-color:#1764b5}
 
 .listTitle{
  padding:10px;border-bottom:1px solid #e1e9f2;font-size:14px;font-weight:bold
 }
 #list{flex:1;overflow-y:auto;padding:7px}
 .item{
- display:flex;align-items:center;gap:9px;padding:10px;
- margin-bottom:6px;border:1px solid #dbe5f0;border-radius:10px;
- cursor:pointer;background:white
+ display:flex;align-items:center;gap:9px;padding:10px;margin-bottom:6px;
+ border:1px solid #dbe5f0;border-radius:10px;cursor:pointer;background:white
 }
 .item:hover{background:#f2f7ff}
 .item.selected{background:#eaf3ff;border-color:#2a78cf}
@@ -84,19 +83,17 @@ body{overflow:hidden;color:#183b62;background:#eef4fb}
 .itemName{font-weight:bold;font-size:15px}
 .itemSub{font-size:12px;color:#647991;margin-top:3px}
 
-/* NÚT THU GỌN - NẰM TRỰC TIẾP TRÊN MAIN */
+/* NÚT THU GỌN LUÔN HIỆN */
 #toggleList{
- position:absolute;
- left:290px;
- top:50%;
+ position:absolute;left:290px;top:50%;
  transform:translateY(-50%);
- width:34px;height:64px;
+ width:35px;height:64px;
  background:#1764b5;color:white;
  border:2px solid white;border-left:0;
  border-radius:0 12px 12px 0;
  font-family:"Times New Roman",serif;font-size:28px;font-weight:bold;
  cursor:pointer;z-index:10000;
- box-shadow:2px 3px 10px rgba(0,0,0,.3);
+ box-shadow:2px 3px 10px rgba(0,0,0,.35);
  display:flex;align-items:center;justify-content:center;
  transition:left .25s ease
 }
@@ -107,11 +104,11 @@ body{overflow:hidden;color:#183b62;background:#eef4fb}
 #mapWrap{flex:1;min-width:0;height:100%;position:relative;z-index:1}
 #map{width:100%;height:100%}
 
-/* LAYER BUTTONS */
+/* MAP LAYERS */
 #mapControls{
  position:absolute;top:12px;right:12px;z-index:1000;
  display:flex;gap:4px;padding:5px;background:white;border-radius:10px;
- box-shadow:0 2px 8px rgba(0,0,0,.2)
+ box-shadow:0 2px 8px #0003
 }
 #mapControls button{
  border:0;background:white;padding:8px 11px;border-radius:7px;
@@ -124,13 +121,13 @@ body{overflow:hidden;color:#183b62;background:#eef4fb}
  width:31px;height:31px;border-radius:50%;border:3px solid white;
  color:white;display:flex;align-items:center;justify-content:center;
  font-weight:bold;font-size:14px;font-family:"Times New Roman",serif;
- box-shadow:0 2px 6px rgba(0,0,0,.35)
+ box-shadow:0 2px 6px #0005
 }
 
 /* POPUP */
 .leaflet-popup-content-wrapper{
  padding:0!important;border-radius:13px!important;overflow:hidden;
- box-shadow:0 5px 25px rgba(0,0,0,.25)!important
+ box-shadow:0 5px 25px #0004!important
 }
 .leaflet-popup-content{margin:0!important;width:270px!important}
 .popupHead{
@@ -143,8 +140,8 @@ body{overflow:hidden;color:#183b62;background:#eef4fb}
  font-size:14px;line-height:1.45
 }
 .routeButton{
- display:block;text-align:center;background:#1764b5;color:white;
- padding:11px;margin-top:10px;border-radius:9px;text-decoration:none;
+ display:block;text-align:center;background:#1764b5;color:white!important;
+ padding:11px;margin-top:10px;border-radius:9px;text-decoration:none!important;
  font-weight:bold;font-size:15px
 }
 .routeButton:hover{background:#0b4b8e}
@@ -202,7 +199,7 @@ body{overflow:hidden;color:#183b62;background:#eef4fb}
   </div>
  </aside>
 
- <!-- NÚT ĐỘC LẬP, KHÔNG NẰM TRONG SIDEBAR -->
+ <!-- NÚT THU GỌN ĐỘC LẬP VỚI SIDEBAR -->
  <button id="toggleList" type="button" title="Thu gọn danh sách">‹</button>
 
  <div id="mapWrap">
@@ -219,9 +216,9 @@ body{overflow:hidden;color:#183b62;background:#eef4fb}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ==========================================
+/* ======================================
    DỮ LIỆU 15 KHU PHỐ
-========================================== */
+====================================== */
 const points=[
  {id:1,name:"Khu phố Chợ",vote:1,lat:10.903975660397565,lng:106.69815306867224},
  {id:2,name:"Khu phố Bình Đức",vote:2,lat:10.916429322611153,lng:106.69166063900626},
@@ -246,9 +243,9 @@ const colors=[
  "#1c8e86","#4058b9","#009c88","#925f4c","#1685db"
 ];
 
-/* ==========================================
-   KHỞI TẠO MAP
-========================================== */
+/* ======================================
+   KHỞI TẠO BẢN ĐỒ
+====================================== */
 const map=L.map("map",{zoomControl:true}).setView([10.9095,106.6995],13);
 
 const street=L.tileLayer(
@@ -268,35 +265,36 @@ const terrain=L.tileLayer(
 
 sat.addTo(map);
 
-/* ==========================================
-   RANH GIỚI PHƯỜNG - FILE RIÊNG
-========================================== */
-let boundaryLayer=null;
+/* ======================================
+   RANH GIỚI VÀNG
+   POLYGON THAM KHẢO TỪ GPS 15 ĐIỂM
+   GeoJSON: [Kinh độ, Vĩ độ]
+   Leaflet: [Vĩ độ, Kinh độ]
+====================================== */
+const boundaryCoordinates=[
+ [106.69612008718514,10.876407136323156],
+ [106.68535404001115,10.925924886793004],
+ [106.69985178855553,10.934938506778733],
+ [106.71109283788044,10.918472457880995],
+ [106.7083366614026,10.907390927850985],
+ [106.69612008718514,10.876407136323156]
+];
 
-fetch("./ward-outline.geojson")
-.then(response=>{
- if(!response.ok)throw new Error("Không tìm thấy ward-outline.geojson");
- return response.json();
-})
-.then(data=>{
- boundaryLayer=L.geoJSON(data,{
-  style:{
-   color:"#FFD000",
-   weight:4,
-   opacity:1,
-   fillOpacity:0,
-   fill:false
-  },
+const boundaryLayer=L.polygon(
+ boundaryCoordinates.map(c=>[c[1],c[0]]),
+ {
+  color:"#FFD700",
+  weight:5,
+  opacity:1,
+  fill:false,
+  fillOpacity:0,
   interactive:false
- }).addTo(map);
-})
-.catch(error=>{
- console.error("Không tải được ranh giới:",error);
-});
+ }
+).addTo(map);
 
-/* ==========================================
-   TẠO MARKER
-========================================== */
+/* ======================================
+   MARKER
+====================================== */
 function markerIcon(p){
  return L.divIcon({
   html:`<div class="marker" style="background:${colors[(p.id-1)%colors.length]}">${p.vote}</div>`,
@@ -319,8 +317,9 @@ function popupContent(p){
    <div class="popupLine"><b>Điểm bầu cử số ${p.vote}</b></div>
    <div class="popupLine"><b>Địa điểm:</b> ${p.name}, phường Lái Thiêu</div>
    <div class="popupLine"><b>GPS:</b> ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}</div>
-   <a class="routeButton" target="_blank" rel="noopener noreferrer" href="${googleUrl}">
-    📍 Chỉ đường đi tới điểm bầu cử
+   <a class="routeButton" target="_blank" rel="noopener noreferrer"
+   href="${googleUrl}">
+   📍 Chỉ đường đi tới điểm bầu cử
    </a>
   </div>
  </div>`;
@@ -335,9 +334,9 @@ points.forEach(p=>{
  markers[p.id]=marker;
 });
 
-/* ==========================================
+/* ======================================
    CHỌN ĐIỂM
-========================================== */
+====================================== */
 let selectedId=null;
 
 function selectPoint(p,fly=true){
@@ -355,9 +354,9 @@ function selectPoint(p,fly=true){
  }
 }
 
-/* ==========================================
-   GPS VÀ KHOẢNG CÁCH
-========================================== */
+/* ======================================
+   GPS
+====================================== */
 window.userPos=null;
 
 function distanceKm(a,b){
@@ -370,9 +369,9 @@ function distanceKm(a,b){
  return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
 
-/* ==========================================
-   HIỂN THỊ DANH SÁCH
-========================================== */
+/* ======================================
+   RENDER DANH SÁCH
+====================================== */
 function renderList(){
  const keyword=document.getElementById("search").value.trim().toLowerCase();
  const filter=document.querySelector(".filters button.active").dataset.filter;
@@ -383,10 +382,8 @@ function renderList(){
   result=result.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));
  }
 
- if(filter==="near"){
-  if(window.userPos){
-   result.sort((a,b)=>distanceKm(a,window.userPos)-distanceKm(b,window.userPos));
-  }
+ if(filter==="near"&&window.userPos){
+  result.sort((a,b)=>distanceKm(a,window.userPos)-distanceKm(b,window.userPos));
  }
 
  document.getElementById("count").textContent=result.length;
@@ -403,24 +400,23 @@ function renderList(){
 
  document.querySelectorAll(".item").forEach(el=>{
   el.onclick=()=>{
-   const p=points.find(p=>p.id===Number(el.dataset.id));
+   const p=points.find(x=>x.id===Number(el.dataset.id));
    if(!p)return;
    selectPoint(p,true);
    renderList();
   };
  });
 }
-
 renderList();
 
-/* ==========================================
-   SEARCH
-========================================== */
+/* ======================================
+   TÌM KIẾM
+====================================== */
 document.getElementById("search").addEventListener("input",renderList);
 
-/* ==========================================
+/* ======================================
    FILTER
-========================================== */
+====================================== */
 document.querySelectorAll(".filters button").forEach(btn=>{
  btn.addEventListener("click",()=>{
   document.querySelectorAll(".filters button").forEach(b=>b.classList.remove("active"));
@@ -447,16 +443,15 @@ document.querySelectorAll(".filters button").forEach(btn=>{
  });
 });
 
-/* ==========================================
-   CHUYỂN BẢN ĐỒ
-========================================== */
+/* ======================================
+   ĐỔI LỚP BẢN ĐỒ
+====================================== */
 document.querySelectorAll("#mapControls button").forEach(btn=>{
  btn.addEventListener("click",()=>{
   document.querySelectorAll("#mapControls button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 
-  const type=btn.dataset.layer;
-  const selectedLayer={street,sat,terrain}[type];
+  const selectedLayer={street,sat,terrain}[btn.dataset.layer];
 
   [street,sat,terrain].forEach(layer=>{
    if(map.hasLayer(layer))map.removeLayer(layer);
@@ -466,11 +461,10 @@ document.querySelectorAll("#mapControls button").forEach(btn=>{
  });
 });
 
-/* ==========================================
-   NÚT THU GỌN / MỞ DANH SÁCH
-========================================== */
+/* ======================================
+   THU GỌN / MỞ DANH SÁCH
+====================================== */
 const main=document.getElementById("main");
-const sidebar=document.getElementById("sidebar");
 const toggleList=document.getElementById("toggleList");
 
 toggleList.addEventListener("click",()=>{
@@ -479,18 +473,13 @@ toggleList.addEventListener("click",()=>{
  toggleList.textContent=closed?"›":"‹";
  toggleList.title=closed?"Mở danh sách khu phố":"Thu gọn danh sách";
 
- setTimeout(()=>{
-  map.invalidateSize(true);
- },300);
+ setTimeout(()=>map.invalidateSize(true),300);
 });
 
-/* ==========================================
-   RESIZE MAP
-========================================== */
-window.addEventListener("resize",()=>{
- map.invalidateSize(true);
-});
-
+/* ======================================
+   MAP RESIZE
+====================================== */
+window.addEventListener("resize",()=>map.invalidateSize(true));
 setTimeout(()=>map.invalidateSize(true),500);
 </script>
 
