@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Bản đồ số phường Lái Thiêu</title>
+  <title>Bản đồ số 15 khu phố - Lái Thiêu</title>
 
   <link rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -14,75 +13,68 @@
 </head>
 <body>
 
-  <header id="header">
-    <div class="logo">LT</div>
+<header id="header">
+  <div class="logo">LT</div>
+  <div class="headerText">
+    <small>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</small>
+    <strong>BẢN ĐỒ SỐ 15 KHU PHỐ</strong>
+  </div>
+</header>
 
-    <div class="headerText">
-      <small>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</small>
-      <strong>BẢN ĐỒ SỐ 15 KHU PHỐ</strong>
+<main id="main">
+
+  <aside id="sidebar">
+    <div id="sidebarContent">
+
+      <div id="sidebarTop">
+        <div class="stats">
+          <div class="stat">
+            <strong id="totalPoints">15</strong>
+            <small>Điểm bản đồ</small>
+          </div>
+          <div class="stat">
+            <strong>15</strong>
+            <small>Khu phố</small>
+          </div>
+        </div>
+
+        <input id="search" type="search" placeholder="Tìm khu phố..." autocomplete="off">
+
+        <div class="filters">
+          <button class="active" data-filter="all">Tất cả</button>
+          <button data-filter="coords">Có tọa độ</button>
+          <button data-filter="near">Gần tôi</button>
+        </div>
+      </div>
+
+      <div class="listTitle">
+        DANH SÁCH KHU PHỐ (<span id="count">15</span>)
+      </div>
+
+      <div id="list"></div>
     </div>
-  </header>
+  </aside>
 
-  <main id="main">
+  <!-- NÚT ĐÓNG MỞ ĐỘC LẬP SIDEBAR -->
+  <button id="toggleList" type="button" title="Thu gọn danh sách">‹</button>
 
-    <aside id="sidebar">
-      <div id="sidebarContent">
+  <section id="mapWrap">
 
-        <div id="sidebarTop">
-          <div class="stats">
-            <div class="stat">
-              <strong id="totalPoints">15</strong>
-              <small>Điểm bản đồ</small>
-            </div>
+    <div id="mapControls">
+      <button data-layer="street">Bản đồ</button>
+      <button data-layer="sat" class="active">Vệ tinh</button>
+      <button data-layer="terrain">Địa hình</button>
+    </div>
 
-            <div class="stat">
-              <strong>15</strong>
-              <small>Khu phố</small>
-            </div>
-          </div>
+    <div id="map"></div>
 
-          <input id="search"
-                 type="search"
-                 placeholder="Tìm khu phố..."
-                 autocomplete="off">
+    <div id="boundaryStatus">Đang tải dữ liệu...</div>
 
-          <div class="filters">
-            <button class="active" data-filter="all">Tất cả</button>
-            <button data-filter="coords">Có tọa độ</button>
-            <button data-filter="near">Gần tôi</button>
-          </div>
-        </div>
+  </section>
+</main>
 
-        <div class="listTitle">
-          Danh sách khu phố (<span id="count">0</span>)
-        </div>
-
-        <div id="list"></div>
-      </div>
-    </aside>
-
-    <button id="toggleList" title="Thu gọn danh sách" type="button">‹</button>
-
-    <section id="mapWrap">
-
-      <div id="mapControls">
-        <button data-layer="street">Bản đồ</button>
-        <button data-layer="sat" class="active">Vệ tinh</button>
-        <button data-layer="terrain">Địa hình</button>
-      </div>
-
-      <div id="map"></div>
-
-      <div id="boundaryStatus">
-        Đang tải bản đồ...
-      </div>
-
-    </section>
-
-  </main>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="./script.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./script.js"></script>
 
 </body>
 </html>
