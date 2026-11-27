@@ -1,14 +1,5 @@
-<!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bản đồ 15 điểm bầu cử khu phố - Lái Thiêu</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="topbar"><div class="seal">LT</div><div class="brand"><div class="org">ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</div><h1>BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ</h1><p>Bầu cử Trưởng khu phố nhiệm kỳ 2026–2029</div><button id="infoBtn" class="info-btn">ⓘ Thông tin</button></header>
-<main class="layout"><aside class="sidebar" id="sidebar"><div class="side-head"><div class="stats"><div><b id="countPoints">15</b><small>điểm có tọa độ</small></div><div><b>15</b><small>khu phố</small></div></div><div class="search"><input id="search" placeholder="Tìm khu phố, địa chỉ…"><button id="clearSearch" title="Xóa">×</button></div><div class="filters"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="gps">Có tọa độ</button><button class="filter" data-filter="near">Gần tôi</button></div><div class="list-title"><strong>Danh sách điểm bầu cử</strong><span id="listCount">15</span></div><div class="point-list" id="pointList"></div><footer class="side-actions"><button id="locate">⌖ Định vị tôi</button><button id="export">⇩ Xuất Excel/CSV</button></footer></div></aside><button class="drawer-toggle" id="drawerToggle" aria-label="Mở danh sách">☰ Danh sách</button><section class="map-area"><div id="map"></div><div class="map-controls"><button data-map="sat" class="selected">Vệ tinh</button><button data-map="street">Bản đồ</button><button data-map="terrain">Địa hình</button></div><div class="mobile-hint">Chạm điểm trên bản đồ để xem thông tin</div></section></main>
-<div id="infoModal" class="modal"><div class="modal-card"><button class="modal-x" id="modalX">×</button><h2>Bản đồ 15 điểm bầu cử khu phố</h2><p>Bản đồ phục vụ tra cứu vị trí các điểm bầu cử khu phố trên địa bàn phường Lái Thiêu.</p><p><b>Lưu ý:</b> Tọa độ các điểm lấy từ dữ liệu hiện có. Ranh giới địa bàn màu vàng chỉ được hiển thị khi có dữ liệu ranh giới GIS đã xác minh; không dùng đường bao giả.</p><button id="modalClose">Đóng</button></div></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
-</body></html>
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bản đồ 15 điểm bầu cử khu phố – Lái Thiêu</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><link rel="stylesheet" href="style.css"></head><body>
+<header><div class="logo">LT</div><div class="headtext"><small>ỦY BAN NHÂN DÂN PHƯỜNG LÁI THIÊU</small><strong>BẢN ĐỒ 15 ĐIỂM BẦU CỬ KHU PHỐ</strong></div></header>
+<aside id="sidebar"><div class="stats"><div><b id="coordCount">15</b><small>điểm có tọa độ</small></div><div><b>15</b><small>khu phố</small></div></div><div class="searchrow"><input id="search" placeholder="Tìm khu phố, địa chỉ..."><button id="clear" title="Xóa tìm kiếm">×</button></div><div class="filters"><button class="active" data-filter="all">Tất cả</button><button data-filter="coords">Có tọa độ</button><button data-filter="near">Gần tôi</button></div><div class="listhead"><strong>Danh sách điểm bầu cử</strong><span>15</span></div><div id="list"></div></aside>
+<main id="map"></main><div id="maptype"><button data-layer="street">Bản đồ</button><button class="selected" data-layer="sat">Vệ tinh</button><button data-layer="terrain">Địa hình</button></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script></body></html>
