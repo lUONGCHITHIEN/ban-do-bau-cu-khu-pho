@@ -9,3 +9,8 @@ function render(){let q=search.value.trim().toLowerCase();let shown=points.filte
 function selectPoint(p,open){if(!p)return;selected=p.name;render();let m=markers.get(p.name);map.flyTo([p.lat,p.lng],16,{duration:.7});if(open)setTimeout(()=>m.openPopup(),650);}
 search.addEventListener('input',render);document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.filter;render();});
 document.querySelector('#toggle').onclick=()=>document.querySelector('#side').classList.toggle('closed');document.querySelectorAll('.basemaps button').forEach(b=>b.onclick=()=>{let name=b.dataset.layer;if(name===activeLayer)return;map.removeLayer(layers[activeLayer]);layers[name].addTo(map);activeLayer=name;document.querySelectorAll('.basemaps button').forEach(x=>x.classList.toggle('active',x===b));});
+// Gold outer boundary overlay: dissolved reference neighborhood polygons (approximate outline).
+fetch('boundary.geojson',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('boundary fetch failed');return r.json();}).then(g=>{
+ const wardOutline=L.geoJSON(g,{style:{color:'#ffd400',weight:5,opacity:1,fillOpacity:0, lineCap:'round',lineJoin:'round'},interactive:false}).addTo(map);
+ wardOutline.bringToFront(); if(window.__markersLayer)window.__markersLayer.bringToFront();
+}).catch(err=>console.warn('Không tải được ranh giới tham khảo:',err));
