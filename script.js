@@ -1,159 +1,205 @@
 
+/* =====================================================
+   BAN DO SO 15 KHU PHO - LAI THIEU
+   File: script.js
+===================================================== */
+
 const COLORS = [
-  "#087f8c","#1680d8","#42a85a","#ff9d20","#8b45b5",
-  "#e44b43","#16a6c4","#ff8c00","#a947bd","#925f4c",
-  "#009c88","#4058b9","#1685db","#925f4c","#1685db"
+  "#087f8c", "#1680d8", "#42a85a", "#ff9d20", "#8b45b5",
+  "#e44b43", "#16a6c4", "#ff8c00", "#a947bd", "#925f4c",
+  "#009c88", "#4058b9", "#1685db", "#925f4c", "#1685db"
 ];
 
+/* KHOI TAO MAP */
 const map = L.map("map", {
   zoomControl: true
 }).setView([10.9095, 106.6995], 13);
 
-/* BẢN ĐỒ NỀN */
-const layers = {
+/* LAYER BAN DO */
+const baseLayers = {
   street: L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    { maxZoom: 19, attribution: "© OpenStreetMap" }
+    {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap"
+    }
   ),
 
   sat: L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    { maxZoom: 19, attribution: "© Esri" }
+    {
+      maxZoom: 19,
+      attribution: "© Esri"
+    }
   ),
 
   terrain: L.tileLayer(
     "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-    { maxZoom: 17, attribution: "© OpenTopoMap" }
+    {
+      maxZoom: 17,
+      attribution: "© OpenTopoMap"
+    }
   )
 };
 
-layers.sat.addTo(map);
+baseLayers.sat.addTo(map);
 
-/* BIẾN */
+/* BIEN */
 let points = [];
 let markers = {};
 let boundaryLayer = null;
 let selectedId = null;
-let userPos = null;
-let activeFilter = "all";
+let userPosition = null;
+let currentFilter = "all";
 
-/* TẢI RANH GIỚI GEOJSON */
+/* =====================================================
+   DOC RANH GIOI
+   DOC FILE boundary.geojson
+   KHONG TU NOI GPS MARKER
+===================================================== */
+
 async function loadBoundary() {
   const status = document.getElementById("boundaryStatus");
 
   try {
-    const response = await fetch("./lai-thieu.geojson");
+    const response = await fetch("./boundary.geojson?v=1");
 
     if (!response.ok) {
-      throw new Error("Không tìm thấy lai-thieu.geojson");
+      throw new Error("HTTP " + response.status);
     }
 
-    const geoData = await response.json();
-    let features = geoData.features || [];
+    const geojson = await response.json();
 
-    // Tìm feature có tên Lái Thiêu trong thuộc tính
-    const wardFeatures = features.filter(feature => {
-      const props = feature.properties || {};
-      const values = Object.values(props).join(" ").toLowerCase();
-      return values.includes("lái thiêu") || values.includes("lai thieu");
-    });
-
-    // Nếu file chỉ có duy nhất 1 polygon thì sử dụng polygon đó
-    if (wardFeatures.length === 0 && features.length === 1) {
-      features = [features[0]];
-    } else if (wardFeatures.length > 0) {
-      features = wardFeatures;
-    } else {
-      throw new Error("Không nhận diện được polygon phường Lái Thiêu trong file");
+    if (!geojson || !geojson.features ||
+        geojson.features.length === 0) {
+      throw new Error("GeoJSON không có features");
     }
 
-    boundaryLayer = L.geoJSON({
-      type: "FeatureCollection",
-      features: features
-    }, {
-      style: {
-        color: "#FFD700",
-        weight: 4,
-        opacity: 1,
-        fillColor: "#FFD700",
-        fillOpacity: 0
+    /* XOA LAYER RANH CU NEU CO */
+    if (boundaryLayer) {
+      map.removeLayer(boundaryLayer);
+    }
+
+    /* VE TRUC TIEP GEOJSON */
+    boundaryLayer = L.geoJSON(geojson, {
+      style: function () {
+        return {
+          color: "#FFD700",
+          weight: 4,
+          opacity: 1,
+          fillColor: "#FFD700",
+          fillOpacity: 0,
+          lineCap: "round",
+          lineJoin: "round"
+        };
       },
+
       interactive: false
     }).addTo(map);
 
+    /* KIEM TRA BOUNDS */
     const bounds = boundaryLayer.getBounds();
 
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, { padding: [25, 25] });
+    if (!bounds.isValid()) {
+      throw new Error("Không xác định được bounds ranh giới");
     }
 
-    status.textContent = "✓ Đã tải lớp ranh giới";
-    console.log("Đã tải GeoJSON ranh phường", features);
+    /* ZOOM TO RANH */
+    map.fitBounds(bounds, {
+      padding: [30, 30],
+      maxZoom: 15
+    });
+
+    status.textContent = "✓ Đã tải ranh giới từ boundary.geojson";
+
+    console.log("GeoJSON boundary loaded:", geojson);
 
   } catch (error) {
-    console.error("Lỗi ranh giới:", error);
-    status.textContent = "⚠ Không tải được ranh giới GeoJSON";
+    console.error("Boundary error:", error);
+
+    status.textContent =
+      "⚠ Lỗi tải boundary.geojson: " + error.message;
   }
 }
 
-/* TẠO MARKER */
-function makeMarkerIcon(point) {
+/* =====================================================
+   MARKER
+===================================================== */
+
+function markerIcon(point) {
+  const color = COLORS[(point.id - 1) % COLORS.length];
+
   return L.divIcon({
-    html: `<div class="marker" style="background:${COLORS[(point.id-1)%COLORS.length]}">${point.vote}</div>`,
+    html:
+      `<div class="marker" style="background:${color}">
+        ${point.vote}
+      </div>`,
     className: "",
     iconSize: [31, 31],
     iconAnchor: [15, 15]
   });
 }
 
-/* POPUP */
-function createPopup(point) {
-  const directions =
-    `https://www.google.com/maps/dir/?api=1&destination=${point.lat},${point.lng}`;
+/* =====================================================
+   POPUP
+===================================================== */
+
+function popupHTML(point) {
+  const color = COLORS[(point.id - 1) % COLORS.length];
+
+  const googleMapsURL =
+    "https://www.google.com/maps/dir/?api=1&destination=" +
+    point.lat + "," + point.lng;
 
   return `
-    <div>
-      <div class="popupHead">
-        <span style="color:${COLORS[(point.id-1)%COLORS.length]}">●</span>
-        ${point.name}
+    <div class="popupHead">
+      <span style="color:${color}">●</span>
+      ${point.name}
+    </div>
+
+    <div class="popupBody">
+      <div class="popupLine">
+        <b>Điểm bản đồ:</b> ${point.vote}
       </div>
 
-      <div class="popupBody">
-        <div class="popupLine">
-          <b>Điểm số ${point.vote}</b>
-        </div>
-
-        <div class="popupLine">
-          <b>Khu phố:</b> ${point.name}
-        </div>
-
-        <div class="popupLine">
-          <b>Tọa độ:</b><br>
-          ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
-        </div>
-
-        <a class="routeButton"
-           href="${directions}"
-           target="_blank"
-           rel="noopener">
-           📍 Mở chỉ đường Google Maps
-        </a>
+      <div class="popupLine">
+        <b>Khu phố:</b> ${point.name}
       </div>
+
+      <div class="popupLine">
+        <b>Tọa độ:</b><br>
+        ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}
+      </div>
+
+      <a class="routeButton"
+         href="${googleMapsURL}"
+         target="_blank"
+         rel="noopener noreferrer">
+         📍 Mở chỉ đường Google Maps
+      </a>
     </div>
   `;
 }
 
-/* NẠP 15 ĐIỂM */
+/* =====================================================
+   TAO 15 MARKER
+===================================================== */
+
 function loadMarkers() {
+  markers = {};
+
   points.forEach(point => {
     const marker = L.marker(
       [point.lat, point.lng],
-      { icon: makeMarkerIcon(point) }
+      {
+        icon: markerIcon(point),
+        title: point.name
+      }
     ).addTo(map);
 
-    marker.bindPopup(createPopup(point));
+    marker.bindPopup(popupHTML(point));
 
-    marker.on("click", () => {
+    marker.on("click", function () {
       selectedId = point.id;
       renderList();
     });
@@ -162,148 +208,224 @@ function loadMarkers() {
   });
 }
 
-/* CHỌN ĐIỂM */
-function selectPoint(point, zoom = true) {
+/* =====================================================
+   CHON KHU PHO
+===================================================== */
+
+function selectPoint(point) {
   selectedId = point.id;
   renderList();
 
-  if (zoom) {
-    map.flyTo([point.lat, point.lng], 16, { duration: 1 });
-
-    setTimeout(() => {
-      markers[point.id].openPopup();
-    }, 800);
-  } else {
-    markers[point.id].openPopup();
-  }
-}
-
-/* TÍNH KHOẢNG CÁCH */
-function distanceKm(a, b) {
-  const R = 6371;
-  const dLat = (a.lat-b.lat) * Math.PI/180;
-  const dLng = (a.lng-b.lng) * Math.PI/180;
-
-  const x =
-    Math.sin(dLat/2)**2 +
-    Math.cos(a.lat*Math.PI/180) *
-    Math.cos(b.lat*Math.PI/180) *
-    Math.sin(dLng/2)**2;
-
-  return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
-}
-
-/* RENDER SIDEBAR */
-function renderList() {
-  const keyword = document.getElementById("search")
-    .value.trim().toLowerCase();
-
-  let result = points.filter(point =>
-    point.name.toLowerCase().includes(keyword)
+  map.flyTo(
+    [point.lat, point.lng],
+    16,
+    { duration: 0.8 }
   );
 
-  if (activeFilter === "coords") {
+  setTimeout(() => {
+    if (markers[point.id]) {
+      markers[point.id].openPopup();
+    }
+  }, 850);
+}
+
+/* =====================================================
+   KHOANG CACH GPS
+===================================================== */
+
+function distanceKm(a, b) {
+  const R = 6371;
+
+  const dLat = (b.lat - a.lat) * Math.PI / 180;
+  const dLng = (b.lng - a.lng) * Math.PI / 180;
+
+  const lat1 = a.lat * Math.PI / 180;
+  const lat2 = b.lat * Math.PI / 180;
+
+  const h =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+  return 2 * R * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+/* =====================================================
+   SIDEBAR LIST
+===================================================== */
+
+function renderList() {
+  const searchValue =
+    document.getElementById("search").value.trim().toLowerCase();
+
+  let result = points.filter(point =>
+    point.name.toLowerCase().includes(searchValue)
+  );
+
+  if (currentFilter === "coords") {
     result = result.filter(point =>
       Number.isFinite(point.lat) &&
       Number.isFinite(point.lng)
     );
   }
 
-  if (activeFilter === "near" && userPos) {
-    result.sort((a,b) =>
-      distanceKm(a,userPos)-distanceKm(b,userPos)
+  if (currentFilter === "near" && userPosition) {
+    result.sort((a, b) =>
+      distanceKm(a, userPosition) -
+      distanceKm(b, userPosition)
     );
   }
 
   document.getElementById("count").textContent = result.length;
 
-  document.getElementById("list").innerHTML = result.map(point => `
-    <div class="item ${selectedId===point.id?"selected":""}"
-         data-id="${point.id}">
-      <span class="itemDot"
-            style="background:${COLORS[(point.id-1)%COLORS.length]}"></span>
-      <div>
-        <div class="itemName">${point.name}</div>
-        <div class="itemSub">Điểm bầu cử số ${point.vote}</div>
-      </div>
-    </div>
-  `).join("");
+  const list = document.getElementById("list");
 
-  document.querySelectorAll(".item").forEach(element => {
-    element.onclick = () => {
-      const point = points.find(p => p.id === Number(element.dataset.id));
-      if (point) selectPoint(point);
-    };
+  list.innerHTML = result.map(point => {
+    const color = COLORS[(point.id - 1) % COLORS.length];
+
+    let subText = "Điểm bản đồ số " + point.vote;
+
+    if (currentFilter === "near" && userPosition) {
+      subText =
+        distanceKm(point, userPosition).toFixed(2) +
+        " km từ vị trí của bạn";
+    }
+
+    return `
+      <div class="item ${selectedId === point.id ? "selected" : ""}"
+           data-id="${point.id}">
+
+        <span class="itemDot" style="background:${color}"></span>
+
+        <div>
+          <div class="itemName">${point.name}</div>
+          <div class="itemSub">${subText}</div>
+        </div>
+
+      </div>
+    `;
+  }).join("");
+
+  list.querySelectorAll(".item").forEach(element => {
+    element.addEventListener("click", function () {
+      const id = Number(this.dataset.id);
+      const point = points.find(p => p.id === id);
+
+      if (point) {
+        selectPoint(point);
+      }
+    });
   });
 }
 
-/* SEARCH */
+/* =====================================================
+   SEARCH
+===================================================== */
+
 document.getElementById("search")
   .addEventListener("input", renderList);
 
-/* FILTER BUTTONS */
+/* =====================================================
+   FILTER
+===================================================== */
+
 document.querySelectorAll(".filters button").forEach(button => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", function () {
     document.querySelectorAll(".filters button")
-      .forEach(b => b.classList.remove("active"));
+      .forEach(btn => btn.classList.remove("active"));
 
-    button.classList.add("active");
-    activeFilter = button.dataset.filter;
+    this.classList.add("active");
+    currentFilter = this.dataset.filter;
 
-    if (activeFilter === "near") {
+    if (currentFilter === "near") {
       if (!navigator.geolocation) {
-        alert("Trình duyệt không hỗ trợ GPS");
+        alert("Trình duyệt không hỗ trợ GPS.");
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(position => {
-        userPos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        renderList();
-      }, () => {
-        alert("Không lấy được vị trí GPS");
-      });
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          userPosition = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          renderList();
+        },
+
+        function () {
+          alert("Không lấy được vị trí. Hãy cho phép truy cập GPS.");
+        },
+
+        {
+          enableHighAccuracy: true,
+          timeout: 15000
+        }
+      );
+
     } else {
       renderList();
     }
   });
 });
 
-/* ĐỔI BẢN ĐỒ */
-document.querySelectorAll("#mapControls button").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll("#mapControls button")
-      .forEach(b => b.classList.remove("active"));
+/* =====================================================
+   CHUYEN BAN DO
+===================================================== */
 
-    button.classList.add("active");
+document.querySelectorAll("#mapControls button")
+  .forEach(button => {
 
-    Object.values(layers).forEach(layer => {
-      if (map.hasLayer(layer)) map.removeLayer(layer);
+    button.addEventListener("click", function () {
+      document.querySelectorAll("#mapControls button")
+        .forEach(btn => btn.classList.remove("active"));
+
+      this.classList.add("active");
+
+      Object.values(baseLayers).forEach(layer => {
+        if (map.hasLayer(layer)) {
+          map.removeLayer(layer);
+        }
+      });
+
+      const layerName = this.dataset.layer;
+
+      if (baseLayers[layerName]) {
+        baseLayers[layerName].addTo(map);
+      }
     });
-
-    layers[button.dataset.layer].addTo(map);
   });
+
+/* =====================================================
+   SIDEBAR TOGGLE
+===================================================== */
+
+const mainElement = document.getElementById("main");
+const toggleButton = document.getElementById("toggleList");
+
+toggleButton.addEventListener("click", function () {
+  const isClosed = mainElement.classList.toggle("listClosed");
+
+  this.textContent = isClosed ? "›" : "‹";
+
+  this.title = isClosed
+    ? "Mở danh sách khu phố"
+    : "Thu gọn danh sách khu phố";
+
+  setTimeout(function () {
+    map.invalidateSize(true);
+  }, 300);
 });
 
-/* THU GỌN DANH SÁCH */
-const main = document.getElementById("main");
-const toggle = document.getElementById("toggleList");
+/* =====================================================
+   LOAD DATA
+===================================================== */
 
-toggle.addEventListener("click", () => {
-  const closed = main.classList.toggle("listClosed");
+async function initMap() {
+  const status = document.getElementById("boundaryStatus");
 
-  toggle.textContent = closed ? "›" : "‹";
-  toggle.title = closed ? "Mở danh sách" : "Thu gọn danh sách";
-
-  setTimeout(() => map.invalidateSize(), 300);
-});
-
-/* KHỞI ĐỘNG */
-async function init() {
   try {
-    const response = await fetch("./points.json");
+    const response = await fetch("./points.json?v=1");
 
     if (!response.ok) {
       throw new Error("Không tải được points.json");
@@ -315,15 +437,20 @@ async function init() {
 
     loadMarkers();
     renderList();
+
+    /* DOC RANH TU FILE boundary.geojson */
     await loadBoundary();
 
   } catch (error) {
-    console.error(error);
-    document.getElementById("boundaryStatus").textContent =
-      "⚠ Lỗi tải dữ liệu. Kiểm tra points.json";
+    console.error("Map initialization error:", error);
+    status.textContent = "⚠ Lỗi tải points.json";
   }
 }
 
-init();
+/* KHOI DONG */
+initMap();
 
-window.addEventListener("resize", () => map.invalidateSize());
+/* FIX RESIZE */
+window.addEventListener("resize", function () {
+  map.invalidateSize(true);
+});
