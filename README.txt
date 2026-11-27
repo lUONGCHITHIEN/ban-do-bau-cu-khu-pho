@@ -3,7 +3,6 @@ BAN DO 15 DIEM BAU CU KHU PHO - PHUONG LAI THIEU
 Du lieu goc:
 - 15 diem bau cu, so diem 1-15 va GPS theo file nguoi dung cung cap.
 - Diem 3: ghi chu goc "ke ben Nha truyen thong thi xa Thuan An".
-- Ten truong/ten dia diem cho cac diem con khong co trong file toa do; khong tu dien ten sai.
 - boundaries.geojson có 15 polygon phân vùng tham khảo (Voronoi), KHÔNG phải ranh chính thức khu phố/phường.
 - Các vùng được tô màu khác nhau, có nhãn tên khu phố trên bản đồ.
 - Bấm vào vùng hoặc khu phố trong danh sách để mở chi tiết và làm nổi vùng đang chọn; rê chuột làm sáng vùng.
