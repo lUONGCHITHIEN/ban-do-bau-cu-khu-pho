@@ -1,0 +1,946 @@
+<script>
+/************************************************************
+ * FILMADS AI — FRONTEND CONTROLLER
+ * FILE 4/7: JavaScript.html
+ ************************************************************/
+const APP = {
+  email: '',
+  isAdmin: false,
+  credits: 0,
+  projects: [],
+  packages: [],
+  orders: [],
+  currentFeedback: '',
+  currentPage: 'home',
+  story: '',
+  busy: false,
+  mode: 'user'
+};
+let FA_AUTH_TOKEN = localStorage.getItem('FA_AUTH_TOKEN') || '';
+let FA_AUTH_MODE = 'login';
+let FA_AUTH_BUSY = false;
+let FA_APP_EVENTS_BOUND = false;
+const FA_AUTH_PUBLIC = new Set(['FA_authRegister','FA_authVerify','FA_authLogin','FA_authForgot','FA_authReset','FA_authLogout']);
+
+const $ = id => document.getElementById(id);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+
+function money(v){
+  return Number(v||0).toLocaleString('vi-VN')+'đ';
+}
+
+
+function server(fn,...args){
+  return new Promise((resolve,reject)=>{
+    if(typeof fn !== 'string' || !fn.trim()){
+      reject(new Error('Tên hàm máy chủ không hợp lệ.'));
+      return;
+    }
+    if(typeof google==='undefined' || !google.script || !google.script.run){
+      reject(new Error('Không kết nối được máy chủ Google Apps Script.'));
+      return;
+    }
+    try{
+      const runner = google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(e=>reject(new Error(e && e.message ? e.message : String(e))));
+      // Public authentication calls go directly to their backend functions.
+      if(FA_AUTH_PUBLIC.has(fn)){
+        runner[fn](...args);
+        return;
+      }
+      // Protected application calls are routed through the token RPC bridge.
+      if(!FA_AUTH_TOKEN){
+        reject(new Error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.'));
+        return;
+      }
+      runner.FA_rpcDispatch(fn,args,FA_AUTH_TOKEN);
+    }catch(err){
+      reject(new Error('Không gọi được máy chủ '+fn+': '+(err && err.message ? err.message : String(err))));
+    }
+  });
+}
+
+
+function toast(message){
+  const el=$('toast');
+  if(!el)return;
+  el.textContent=message;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+function showNotice(message){
+  const el=$('appNotice');
+  el.textContent=message;
+  el.classList.remove('hidden');
+}
+
+function hideNotice(){
+  $('appNotice')?.classList.add('hidden');
+}
+
+function setBusy(b){
+  APP.busy=!!b;
+  $('generateBtn').disabled=APP.busy;
+  $('generateBtn').textContent=APP.busy?'Đang xử lý...':'✦ Tạo kịch bản & Storyboard';
+}
+
+function formatDate(v){
+  if(!v)return '-';
+  const d=new Date(v);
+  return isNaN(d)?esc(v):d.toLocaleString('vi-VN');
+}
+
+function statusBadge(status){
+  const s=String(status||'');
+  let cls='badge';
+  if(/đã xác nhận|đã thanh toán|đã giải quyết/i.test(s))cls+=' badge-green';
+  else if(/chờ|mới|đang xử lý/i.test(s))cls+=' badge-yellow';
+  else if(/từ chối|hủy|lỗi/i.test(s))cls+=' badge-red';
+  return `<span class="${cls}">${esc(s||'Không rõ')}</span>`;
+}
+
+/* USER / ADMIN MODE SWITCH — ADMIN ONLY */
+function setAppMode(mode){
+  if(!APP.isAdmin){APP.mode='user';toast('Tài khoản không có quyền chuyển chế độ Admin.');return;}
+  APP.mode=(mode==='admin'?'admin':'user');
+  const userNav=$('userNav'),adminNav=$('adminNav'),toggle=$('adminModeToggle'),create=$('topCreateButton');
+  if(userNav)userNav.classList.toggle('hidden',APP.mode==='admin');
+  if(adminNav)adminNav.classList.toggle('hidden',APP.mode!=='admin');
+  if(toggle){toggle.classList.remove('hidden');toggle.textContent=APP.mode==='admin'?'← Chuyển sang USER MODE':'Chuyển sang ADMIN MODE';}
+  if(create)create.classList.toggle('hidden',APP.mode==='admin');
+  const banner=$('modeBanner');
+  if(banner){banner.classList.remove('hidden');banner.textContent=APP.mode==='admin'?'ADMIN MODE — Khu vực quản trị':'USER MODE — Khu vực khách hàng';}
+  showPage(APP.mode==='admin'?'admin':'home');
+}
+function toggleAdminMode(){if(!APP.isAdmin){toast('Bạn không có quyền Admin.');return;}setAppMode(APP.mode==='admin'?'user':'admin');}
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+function showPage(page){
+  if(page.startsWith('admin') && (!APP.isAdmin || APP.mode!=='admin')){
+    toast('Bạn không có quyền truy cập Admin.');
+    return;
+  }
+  if(page==='admin' && !APP.isAdmin){
+    toast('Bạn không có quyền truy cập Admin.');
+    return;
+  }
+
+  APP.currentPage=page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('page-'+page)?.classList.add('active');
+
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.page===page);
+  });
+
+  const titles={
+    home:'Tổng quan',create:'Tạo quảng cáo',projects:'Dự án của tôi',
+    credits:'Gói & Video',orders:'Đơn hàng',feedback:'Hỗ trợ',notifications:'Thông báo',chat:'Chat CSKH',adminChat:'Chat khách hàng',
+    admin:'Dashboard Admin',adminOrders:'Quản lý đơn',
+    adminUsers:'Người dùng',adminFeedback:'Phản ánh',
+    adminPackages:'Quản lý gói',adminRevenue:'Doanh thu',
+    adminSecurity:'Bảo mật'
+  };
+  $('topTitle').textContent=titles[page]||'FILMADS AI';
+  $('sidebar').classList.remove('open');
+  hideNotice();
+
+  const loaders={
+    home:loadHome,
+    projects:renderProjects,
+    credits:loadPackages,
+    orders:loadOrders,
+    feedback:loadFeedback,
+    admin:loadAdminDashboard,
+    adminOrders:loadAdminOrders,
+    adminUsers:loadAdminUsers,
+    adminFeedback:loadAdminFeedback,
+    adminPackages:loadAdminPackages,
+    adminRevenue:loadRevenue,
+    adminSecurity:loadAdminSecurity,notifications:loadNotifications,chat:loadUserChat,adminChat:loadAdminChatList
+  };
+  loaders[page]?.();
+}
+
+document.addEventListener('click',e=>{
+  const target=e.target.closest('[data-page]');
+  if(target)showPage(target.dataset.page);
+});
+
+/* =========================================================
+   INIT / ACCOUNT
+========================================================= */
+async function init(){
+  if(!FA_APP_EVENTS_BOUND){bindEvents();FA_APP_EVENTS_BOUND=true;}
+  loadProjects();
+  if(!FA_AUTH_TOKEN){FA_authShowGate();return;}
+  $('faAuthGate')?.classList.add('hidden');document.body.classList.remove('fa-logged-out');
+
+  try{
+    const info=await server('FA_getMySecurityInfo');
+    if(!info || info.success===false){
+      showNotice(info?.message||'Không thể xác định tài khoản.');
+      return;
+    }
+    if(info.locked){
+      showNotice('Tài khoản đang bị khóa: '+(info.reason||''));
+      return;
+    }
+
+    APP.email=info.email||info.userEmail||'';
+    APP.isAdmin=!!info.isAdmin;
+    $('userEmail').textContent=APP.email||'Tài khoản Google';
+    $('userRole').textContent=APP.isAdmin?'ADMIN':'USER';
+    $('adminModeToggle')?.classList.toggle('hidden',!APP.isAdmin);
+    APP.mode='user';
+    if(APP.isAdmin)setAppMode('user');
+    else { $('adminNav')?.classList.add('hidden'); $('userNav')?.classList.remove('hidden'); }
+
+    await Promise.allSettled([loadCredits(),loadPackages()]);
+    loadHome();
+    loadNotifications();
+  }catch(e){
+    if(/phiên đăng nhập|đăng nhập lại|tài khoản đã bị khóa/i.test(e.message||'')){FA_authClear();FA_authShowGate();return;}
+    showNotice('Lỗi khởi tạo: '+e.message);
+  }
+}
+
+function bindEvents(){
+  $('mobileMenu')?.addEventListener('click',()=> $('sidebar').classList.toggle('open'));
+  $('modalClose')?.addEventListener('click',closeModal);
+  $('modalRoot')?.addEventListener('click',e=>{
+    if(e.target===$('modalRoot'))closeModal();
+  });
+  $('generateBtn')?.addEventListener('click',generateStory);
+  $('saveProjectBtn')?.addEventListener('click',saveCurrentProject);
+  $('copyStoryBtn')?.addEventListener('click',copyStory);
+  $('sendFeedbackBtn')?.addEventListener('click',submitFeedback);
+  $('imageInput')?.addEventListener('change',previewImage);
+  $('faPaymentConfirmBtn')?.addEventListener('click',FA_submitPaymentReport);
+  $('faPaymentCancelBtn')?.addEventListener('click',FA_closePaymentModal);
+  $('faPaymentCloseBtn')?.addEventListener('click',FA_closePaymentModal);
+  $('faPaymentOverlay')?.addEventListener('click',FA_paymentOverlayClick);
+  $('userChatSend')?.addEventListener('click',sendUserChat);
+  $('adminChatSend')?.addEventListener('click',sendAdminChat);
+  $('adminChatList')?.addEventListener('click',e=>{const el=e.target.closest('[data-chat-email]');if(el)openAdminChat(el.dataset.chatEmail);});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape' && $('faPaymentOverlay')?.classList.contains('show')) FA_closePaymentModal();
+  });
+}
+
+function closeModal(){
+  $('modalRoot')?.classList.remove('open');
+}
+
+function openModal(title,body){
+  $('modalTitle').textContent=title;
+  $('modalBody').innerHTML=body;
+  $('modalRoot').classList.add('open');
+}
+
+/* =========================================================
+   CREDITS
+========================================================= */
+async function loadCredits(){
+  try{
+    const r=await server('FA_getMyVideoCredits');
+    if(r?.success===false)throw new Error(r.message||r.error);
+    APP.credits=Number(r.balance??r.remaining??r.credits??0);
+    renderCredits();
+  }catch(e){
+    console.error(e);
+    $('creditBalance').textContent='--';
+    $('creditBalance2').textContent='--';
+    $('creditBalancePage').textContent='--';
+  }
+}
+
+function renderCredits(){
+  $('creditBalance').textContent=APP.credits;
+  $('creditBalance2').textContent=APP.credits;
+  $('creditBalancePage').textContent=APP.credits;
+}
+
+/* =========================================================
+   PACKAGES
+========================================================= */
+async function loadPackages(){
+  try{
+    const r=await server('FA_getPackages');
+    APP.packages=Array.isArray(r)?r:(r?.packages||[]);
+    renderPackages();
+  }catch(e){
+    $('packagesGrid').innerHTML=`<div class="empty">Không tải được gói: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderPackages(){
+  const list=APP.packages.filter(p=>p.active!==false && p.status!=='Ngừng bán');
+  if(!list.length){
+    $('packagesGrid').innerHTML='<div class="empty">Chưa có gói dịch vụ đang bán.</div>';
+    return;
+  }
+  $('packagesGrid').innerHTML=list.map(p=>{
+    const id=p.id||p.packageId||p.code;
+    const name=p.name||p.packageName||id;
+    const videos=Number(p.videos??p.videoCount??p.video??0);
+    const price=Number(p.price??0);
+    return `<div class="package-card">
+      <div class="muted small">${esc(id)}</div>
+      <h3>${esc(name)}</h3>
+      <div class="package-videos">${videos} video</div>
+      <div class="package-price">${money(price)}</div>
+      <ul class="package-features">
+        <li>✓ Credit video theo gói</li>
+        <li>✓ Quản lý đơn hàng</li>
+        <li>✓ Hỗ trợ tài khoản</li>
+      </ul>
+      <button class="btn btn-primary btn-block" onclick="buyPackage('${esc(id)}')">Chọn gói</button>
+    </div>`;
+  }).join('');
+}
+
+async function buyPackage(id){
+  const p=APP.packages.find(x=>(x.id||x.packageId||x.code)===id);
+  if(!p){toast('Không tìm thấy gói. Vui lòng tải lại.');return;}
+
+  const price=Number(p.price||0);
+  const name=p.name||p.packageName||id;
+  const videos=Number(p.videos??p.videoCount??0);
+
+  openModal('Xác nhận mua gói',`
+    <div class="card">
+      <h3>${esc(name)}</h3>
+      <p>${videos} video</p>
+      <h2>${money(price)}</h2>
+      <p class="muted small">Đơn hàng sẽ được tạo trước. Thanh toán chỉ được xác nhận sau khi Admin kiểm tra giao dịch.</p>
+      <button class="btn btn-primary btn-block" id="confirmBuy">Tạo đơn hàng</button>
+    </div>`);
+
+  setTimeout(()=>{
+    $('confirmBuy')?.addEventListener('click',async()=>{
+      const b=$('confirmBuy');
+      b.disabled=true;b.textContent='Đang tạo đơn...';
+      try{
+        const r=await server('FA_createVideoOrder',id);
+        if(!r?.success)throw new Error(r?.message||r?.error||'Tạo đơn thất bại');
+        closeModal();
+        showOrderPayment(r);
+        loadOrders();
+        toast('Đã tạo đơn hàng.');
+      }catch(e){
+        b.disabled=false;b.textContent='Tạo đơn hàng';
+        toast(e.message);
+      }
+    });
+  },0);
+}
+
+function showOrderPayment(order){
+  const orderId=order.orderId||order.id||order.code||'';
+  const amount=Number(order.price||order.amount||0);
+  const transfer=order.transferContent||order.transferCode||order.paymentContent||orderId;
+
+  openModal('Thông tin thanh toán',`
+    <div class="card">
+      <h3>${esc(order.packageName||'Đơn hàng')}</h3>
+      <p>Mã đơn: <b>${esc(orderId)}</b></p>
+      <h2>${money(amount)}</h2>
+      <div class="notice">QR thanh toán sẽ được hiển thị khi cấu hình thông tin ngân hàng. Hiện tại chưa xác nhận thanh toán tự động.</div>
+      <p>Nội dung chuyển khoản:</p>
+      <div class="preview-box"><b>${esc(transfer)}</b></div>
+      <button class="btn btn-block" onclick="copyText('${esc(transfer)}')">Sao chép nội dung</button>
+      <button class="btn btn-primary btn-block section-gap" onclick="reportPayment('${esc(orderId)}')">Tôi đã thanh toán</button>
+    </div>`);
+}
+
+/* =========================================================
+   PAYMENT CONFIRMATION — CUSTOM MODAL (thay confirm() cũ)
+========================================================= */
+let FA_paymentOrderPending = '';
+let FA_paymentBusy = false;
+
+function reportPayment(orderId){
+  FA_paymentOrderPending = String(orderId || '').trim();
+  FA_paymentBusy = false;
+  const overlay = $('faPaymentOverlay');
+  const orderLabel = $('faPaymentOrderId');
+  const status = $('faPaymentStatus');
+  const button = $('faPaymentConfirmBtn');
+  if(!overlay){ toast('Không tìm thấy cửa sổ xác nhận thanh toán.'); return; }
+  if(orderLabel) orderLabel.textContent = FA_paymentOrderPending || '—';
+  if(status){ status.textContent=''; status.className='fa-pay-status'; }
+  if(button){ button.disabled=false; button.innerHTML='Đã chuyển khoản'; }
+  overlay.classList.add('show');
+}
+function FA_closePaymentModal(){
+  if(FA_paymentBusy) return;
+  $('faPaymentOverlay')?.classList.remove('show');
+  FA_paymentOrderPending='';
+}
+function FA_paymentOverlayClick(event){
+  if(event.target && event.target.id==='faPaymentOverlay') FA_closePaymentModal();
+}
+async function FA_submitPaymentReport(){
+  if(FA_paymentBusy) return;
+  const orderId=FA_paymentOrderPending;
+  if(!orderId){ toast('Không xác định được mã đơn hàng.'); return; }
+  FA_paymentBusy=true;
+  const button=$('faPaymentConfirmBtn');
+  const status=$('faPaymentStatus');
+  if(button){button.disabled=true;button.innerHTML='<span class="fa-pay-spinner"></span>Đang gửi...';}
+  if(status){status.textContent='Đang gửi yêu cầu xác nhận thanh toán...';status.className='fa-pay-status';}
+  try{
+    const r=await server('FA_customerReportPayment',orderId);
+    if(!r?.success) throw new Error(r?.message||r?.error||'Không gửi được thông báo.');
+    if(status){status.textContent='✓ Gửi yêu cầu thành công!';status.className='fa-pay-status success';}
+    toast('Đã gửi báo thanh toán thành công. Đơn hàng đang chờ Admin kiểm tra.');
+    $('faPaymentOverlay')?.classList.remove('show');
+    FA_paymentOrderPending=''; FA_paymentBusy=false;
+    if(button){button.disabled=false;button.innerHTML='Đã chuyển khoản';}
+    loadOrders();
+  }catch(e){
+    FA_paymentBusy=false;
+    if(button){button.disabled=false;button.innerHTML='Đã chuyển khoản';}
+    if(status){status.textContent=e.message||'Có lỗi khi gửi yêu cầu thanh toán.';status.className='fa-pay-status error';}
+    toast(e.message||'Có lỗi khi gửi yêu cầu thanh toán.');
+  }
+}
+
+/* =========================================================
+   ORDERS
+========================================================= */
+async function loadOrders(){
+  try{
+    const r=await server('FA_getMyOrders');
+    APP.orders=Array.isArray(r)?r:(Array.isArray(r?.orders)?r.orders:(Array.isArray(r?.data)?r.data:[]));
+    renderOrders();
+  }catch(e){
+    $('myOrders').innerHTML=`<div class="empty">${esc(e.message)}</div>`;
+  }
+}
+
+function renderOrders(){
+  $('homeOrderCount').textContent=APP.orders.length;
+  if(!APP.orders.length){
+    $('myOrders').innerHTML='<div class="empty">Bạn chưa có đơn hàng.</div>';
+    return;
+  }
+  $('myOrders').innerHTML=`<table><thead><tr>
+    <th>Mã đơn</th><th>Gói</th><th>Số video</th><th>Giá</th><th>Trạng thái</th><th>Ngày tạo</th>
+  </tr></thead><tbody>${APP.orders.map(o=>`<tr>
+    <td>${esc(o.orderId||o.id||'')}</td>
+    <td>${esc(o.packageName||o.name||'')}</td>
+    <td>${esc(o.videos??o.videoCount??0)}</td>
+    <td>${money(o.price||o.amount||0)}</td>
+    <td>${statusBadge(o.status)}</td>
+    <td>${formatDate(o.createdAt||o.date)}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+/* =========================================================
+   HOME
+========================================================= */
+async function loadHome(){
+  await Promise.allSettled([loadCredits(),loadOrders()]);
+  renderProjects();
+}
+
+/* =========================================================
+   STORYBOARD / COPY
+========================================================= */
+function previewImage(e){
+  const file=e.target.files?.[0];
+  if(!file){$('imagePreview').innerHTML='';return;}
+  if(file.size>5*1024*1024){
+    toast('Ảnh tối đa 5MB.');
+    e.target.value='';
+    return;
+  }
+  const url=URL.createObjectURL(file);
+  $('imagePreview').innerHTML=`<img class="image-preview" src="${url}" alt="Ảnh sản phẩm">`;
+}
+
+function generateStory(){
+  if(APP.busy)return;
+  const name=$('productName').value.trim();
+  const desc=$('productDesc').value.trim();
+  if(!name||!desc){toast('Nhập tên và mô tả sản phẩm.');return;}
+
+  setBusy(true);
+  try{
+    const duration=Number($('duration').value||30);
+    const style=$('style').value;
+    const price=$('productPrice').value.trim();
+    const scenes=Math.max(3,Math.ceil(duration/7));
+    const per=Math.floor(duration/scenes);
+    const styles={
+      cinematic:'Điện ảnh, ánh sáng ấn tượng, chuyển cảnh mượt',
+      ugc:'Chân thực, tự nhiên như người dùng trải nghiệm',
+      viral:'Nhịp nhanh, hook mạnh, phù hợp mạng xã hội',
+      luxury:'Sang trọng, tối giản, cao cấp',
+      review:'Tập trung trải nghiệm, ưu điểm và đánh giá',
+      story:'Kể chuyện có mở đầu, cao trào và kết',
+      professional:'Quảng cáo chuyên nghiệp, rõ thông điệp'
+    };
+    let out=`KỊCH BẢN QUẢNG CÁO: ${name}\n`;
+    out+=`Thời lượng: ${duration} giây\nPhong cách: ${styles[style]||style}\n\n`;
+    out+=`MÔ TẢ: ${desc}\n`;
+    if(price)out+=`GIÁ: ${price}\n`;
+    out+=`\n`;
+
+    for(let i=0;i<scenes;i++){
+      const start=i*per;
+      const end=i===scenes-1?duration:(start+per);
+      let heading,visual,voice,overlay;
+      if(i===0){
+        heading='HOOK — Thu hút';
+        visual=`Cận cảnh ${name}, khung hình gây chú ý, chuyển động camera mạnh.`;
+        voice=`Bạn đang tìm kiếm ${name}?`;
+        overlay=`${name} — Đừng bỏ lỡ`;
+      }else if(i===scenes-1){
+        heading='CTA — Chốt hành động';
+        visual=`Sản phẩm xuất hiện rõ, bố cục đẹp, kết thúc bằng cảnh sử dụng thực tế.`;
+        voice=`Tìm hiểu ${name} ngay hôm nay nhé!`;
+        overlay='Đặt mua / Tìm hiểu ngay';
+      }else{
+        heading=`SCENE ${i+1} — Trải nghiệm`;
+        visual=`Minh họa sản phẩm ${name} trong bối cảnh thực tế. Thể hiện điểm nổi bật: ${desc}.`;
+        voice=`${name} giúp bạn trải nghiệm tiện ích và giá trị nổi bật.`;
+        overlay='Điểm nổi bật • Trải nghiệm • Giá trị';
+      }
+      out+=`${heading} (${start}-${end}s)\n`;
+      out+=`Hình ảnh: ${visual}\n`;
+      out+=`Lời thoại: ${voice}\n`;
+      out+=`Text overlay: ${overlay}\n\n`;
+    }
+    APP.story=out;
+    $('storyOutput').innerHTML=`<pre style="white-space:pre-wrap;line-height:1.7;font-family:inherit">${esc(out)}</pre>`;
+    $('saveProjectBtn').classList.remove('hidden');
+    $('copyStoryBtn').classList.remove('hidden');
+  }catch(e){
+    toast('Không tạo được storyboard: '+e.message);
+  }finally{
+    setBusy(false);
+  }
+}
+
+function copyStory(){
+  copyText(APP.story);
+}
+
+function copyText(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text)
+      .then(()=>toast('Đã sao chép.'))
+      .catch(()=>toast('Không sao chép được.'));
+  }else{
+    toast('Trình duyệt không hỗ trợ sao chép.');
+  }
+}
+
+/* =========================================================
+   PROJECTS — local browser storage
+========================================================= */
+function loadProjects(){
+  try{
+    APP.projects=JSON.parse(localStorage.getItem('FA_PROJECTS')||'[]');
+    if(!Array.isArray(APP.projects))APP.projects=[];
+  }catch(e){APP.projects=[];}
+  updateProjectCounts();
+}
+
+function persistProjects(){
+  localStorage.setItem('FA_PROJECTS',JSON.stringify(APP.projects));
+  updateProjectCounts();
+}
+
+function updateProjectCounts(){
+  $('projectCount').textContent=APP.projects.length;
+}
+
+function saveCurrentProject(){
+  if(!APP.story){toast('Chưa có storyboard để lưu.');return;}
+  const project={
+    id:'P'+Date.now(),
+    name:$('productName').value.trim(),
+    description:$('productDesc').value.trim(),
+    style:$('style').value,
+    duration:Number($('duration').value),
+    story:APP.story,
+    createdAt:new Date().toISOString()
+  };
+  APP.projects.unshift(project);
+  persistProjects();
+  renderProjects();
+  toast('Đã lưu dự án trên thiết bị này.');
+}
+
+function renderProjects(){
+  updateProjectCounts();
+  const list=$('projectList');
+  const recent=$('recentProjects');
+  if(!APP.projects.length){
+    list.innerHTML='<div class="empty">Chưa có dự án.</div>';
+    recent.innerHTML='<div class="empty">Chưa có dự án gần đây.</div>';
+    return;
+  }
+  const cards=APP.projects.map(p=>`<div class="project-card">
+    <div class="project-thumb">✦</div>
+    <b>${esc(p.name||'Dự án')}</b>
+    <div class="muted small section-gap">${formatDate(p.createdAt)}</div>
+    <button class="btn btn-sm section-gap" onclick="openProject('${esc(p.id)}')">Xem</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteProject('${esc(p.id)}')">Xóa</button>
+  </div>`).join('');
+  list.innerHTML=cards;
+  recent.innerHTML=APP.projects.slice(0,3).map(p=>`<div class="project-card section-gap">
+    <b>${esc(p.name||'Dự án')}</b>
+    <div class="muted small">${formatDate(p.createdAt)}</div>
+    <button class="btn btn-sm section-gap" onclick="openProject('${esc(p.id)}')">Mở</button>
+  </div>`).join('');
+}
+
+function openProject(id){
+  const p=APP.projects.find(x=>x.id===id);
+  if(!p)return;
+  APP.story=p.story||'';
+  openModal(esc(p.name||'Dự án'),`
+    <div class="preview-box"><pre style="white-space:pre-wrap">${esc(p.story||'')}</pre></div>
+    <button class="btn btn-primary section-gap" onclick="copyText(APP.story)">Sao chép nội dung</button>`);
+}
+
+function deleteProject(id){
+  if(!confirm('Xóa dự án này?'))return;
+  APP.projects=APP.projects.filter(p=>p.id!==id);
+  persistProjects();
+  renderProjects();
+}
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+async function loadFeedback(){
+  try{
+    const r=await server('FA_getMyFeedbacks');
+    const list=Array.isArray(r)?r:(r?.feedbacks||r?.items||[]);
+    renderFeedback(list);
+  }catch(e){
+    $('myFeedbackList').innerHTML=`<div class="empty">${esc(e.message)}</div>`;
+  }
+}
+
+function renderFeedback(list){
+  if(!list.length){
+    $('myFeedbackList').innerHTML='<div class="empty">Chưa có phản ánh.</div>';
+    return;
+  }
+  $('myFeedbackList').innerHTML=list.map(f=>`<div class="project-card section-gap">
+    <b>${esc(f.title||'Phản ánh')}</b>
+    <div class="small muted">${formatDate(f.createdAt||f.date)}</div>
+    ${statusBadge(f.status)}
+    <button class="btn btn-sm section-gap" onclick="viewFeedback('${esc(f.id||f.feedbackId)}')">Chi tiết</button>
+  </div>`).join('');
+}
+
+async function submitFeedback(){
+  const title=$('feedbackTitle').value.trim();
+  const content=$('feedbackContent').value.trim();
+  if(!title||!content){toast('Nhập tiêu đề và nội dung.');return;}
+  try{
+    const r=await server('FA_submitFeedback',title,content);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Gửi phản ánh thất bại');
+    $('feedbackTitle').value='';
+    $('feedbackContent').value='';
+    toast('Đã gửi phản ánh.');
+    try{const staff=await server('FA_ncStaffEmails');await server('FA_ncPushNotification',staff,'FEEDBACK','Phản ánh mới từ khách hàng',APP.email+' gửi: '+title+' — '+content.slice(0,250));}catch(_e){}
+    loadFeedback();
+  }catch(e){toast(e.message);}
+}
+
+async function viewFeedback(id){
+  try{
+    const r=await server('FA_getFeedbackDetail',id);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Không lấy được chi tiết');
+    const f=r.feedback||{};
+    $('feedbackDetail').innerHTML=`<div class="project-card">
+      <b>${esc(f.title||'')}</b><p>${esc(f.content||'')}</p>
+      ${statusBadge(f.status)}
+      <hr>
+      <b>Phản hồi:</b><p>${esc(f.reply||f.finalReply||'Chưa có phản hồi')}</p>
+    </div>`;
+  }catch(e){toast(e.message);}
+}
+
+/* =========================================================
+   ADMIN — shared table rendering
+========================================================= */
+function tableHTML(headers,rows){
+  return `<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.join(''):`<tr><td colspan="${headers.length}" class="empty">Không có dữ liệu</td></tr>`}</tbody></table></div>`;
+}
+
+async function loadAdminDashboard(){
+  if(!APP.isAdmin)return;
+  try{
+    const [users,orders,revenue]=await Promise.all([
+      server('FA_adminGetUsers'),
+      server('FA_adminGetOrders'),
+      server('FA_adminGetRevenueStats')
+    ]);
+    const ul=Array.isArray(users)?users:(users?.users||[]);
+    const ol=Array.isArray(orders)?orders:(orders?.orders||[]);
+    const rev=revenue?.stats||revenue||{};
+    $('adminUserCount').textContent=ul.length;
+    $('adminOrderCount').textContent=ol.length;
+    $('adminRevenueTotal').textContent=money(rev.totalRevenue||rev.revenue||0);
+    $('adminCreditsTotal').textContent=rev.totalCredits||0;
+    $('adminHealth').textContent='Dữ liệu quản trị đã tải.';
+  }catch(e){
+    $('adminHealth').textContent='Lỗi tải dashboard: '+e.message;
+  }
+}
+
+async function loadAdminOrders(){
+  const holder=$('adminOrdersTable');
+  if(holder) holder.innerHTML='<div class="empty">Đang tải đơn hàng...</div>';
+  try{
+    const r=await server('FA_adminGetOrders');
+    const list=Array.isArray(r)?r:(Array.isArray(r?.orders)?r.orders:(Array.isArray(r?.data)?r.data:[]));
+    $('adminOrdersTable').innerHTML=list.length?tableHTML(
+      ['Mã đơn','Email','Gói','Video','Giá','Trạng thái','Thao tác'],
+      list.map(o=>`<tr>
+        <td>${esc(o.orderId||o.id||'')}</td>
+        <td>${esc(o.email||'')}</td>
+        <td>${esc(o.packageName||'')}</td>
+        <td>${esc(o.videos??0)}</td>
+        <td>${money(o.price||0)}</td>
+        <td>${statusBadge(o.status)}</td>
+        <td><button class="btn btn-sm btn-success" onclick="adminConfirmOrder('${esc(o.orderId||o.id)}')">Xác nhận</button>
+        <button class="btn btn-sm btn-danger" onclick="adminRejectOrder('${esc(o.orderId||o.id)}')">Từ chối</button></td>
+      </tr>`)
+    ):'<div class="empty">Chưa có đơn hàng trong nguồn dữ liệu này.</div>';
+  }catch(e){
+    $('adminOrdersTable').textContent='Lỗi tải đơn: '+e.message;
+  }
+}
+
+async function adminConfirmOrder(id){
+  if(!confirm('Xác nhận thanh toán và cộng video cho đơn '+id+'?'))return;
+  try{
+    const r=await server('FA_adminConfirmPayment',id);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Xác nhận thất bại');
+    toast(r.message||'Đã xác nhận đơn.');
+    try{await server('FA_ncPushNotification', (await server('FA_ncOrderEmail',id)), 'PAYMENT_SUCCESS','Thanh toán thành công','Đơn '+id+' đã được xác nhận và credit đã cộng.');}catch(_e){}
+    loadAdminOrders();loadAdminDashboard();
+  }catch(e){toast(e.message);}
+}
+
+async function adminRejectOrder(id){
+  const reason=prompt('Nhập lý do từ chối:');
+  if(!reason)return;
+  try{
+    const r=await server('FA_adminRejectOrder',id,reason);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Từ chối thất bại');
+    toast('Đã từ chối đơn.');
+    try{await server('FA_ncPushNotification', (await server('FA_ncOrderEmail',id)), 'PAYMENT_REJECTED','Thanh toán bị từ chối','Đơn '+id+' bị từ chối. Lý do: '+reason);}catch(_e){}
+    loadAdminOrders();
+  }catch(e){toast(e.message);}
+}
+
+async function loadAdminUsers(){
+  if(!APP.isAdmin)return;
+  try{
+    const r=await server('FA_adminGetUsers');
+    const list=Array.isArray(r)?r:(r?.users||[]);
+    $('adminUsersTable').innerHTML=tableHTML(
+      ['Email','Được cấp','Đã dùng','Còn lại','Trạng thái','Điều chỉnh'],
+      list.map(u=>`<tr>
+        <td>${esc(u.email||'')}</td>
+        <td>${esc(u.granted??u.totalGranted??0)}</td>
+        <td>${esc(u.used??u.totalUsed??0)}</td>
+        <td>${esc(u.balance??u.remaining??0)}</td>
+        <td>${statusBadge(u.status||'Hoạt động')}</td>
+        <td><button class="btn btn-sm" onclick="adjustUser('${esc(u.email)}')">Credit</button>
+        <button class="btn btn-sm btn-danger" onclick="lockUser('${esc(u.email)}')">Khóa</button>
+        <button class="btn btn-sm btn-success" onclick="unlockUser('${esc(u.email)}')">Mở</button></td>
+      </tr>`)
+    );
+  }catch(e){$('adminUsersTable').textContent=e.message;}
+}
+
+async function adjustUser(email){
+  const amount=prompt('Nhập số video muốn điều chỉnh (số âm để trừ):');
+  if(amount===null)return;
+  const reason=prompt('Lý do điều chỉnh:');
+  if(!reason)return;
+  try{
+    const r=await server('FA_adminAdjustCredits',email,Number(amount),reason);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Điều chỉnh thất bại');
+    toast('Đã điều chỉnh credit.');
+    loadAdminUsers();
+  }catch(e){toast(e.message);}
+}
+
+async function lockUser(email){
+  const reason=prompt('Lý do khóa tài khoản:');
+  if(!reason)return;
+  try{
+    const r=await server('FA_lockAccount',email,reason);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Khóa thất bại');
+    toast('Đã khóa tài khoản.');
+    loadAdminUsers();
+  }catch(e){toast(e.message);}
+}
+
+async function unlockUser(email){
+  if(!confirm('Mở khóa tài khoản '+email+'?'))return;
+  try{
+    const r=await server('FA_unlockAccount',email);
+    if(!r?.success)throw new Error(r?.message||r?.error||'Mở khóa thất bại');
+    toast('Đã mở khóa.');
+    loadAdminUsers();
+  }catch(e){toast(e.message);}
+}
+
+async function loadAdminFeedback(){
+  if(!APP.isAdmin)return;
+  try{
+    const r=await server('FA_adminGetFeedbacks');
+    const list=Array.isArray(r)?r:(r?.feedbacks||[]);
+    $('adminFeedbackTable').innerHTML=list.map(f=>`<div class="project-card section-gap">
+      <b>${esc(f.title||'')}</b><div class="muted small">${esc(f.email||'')}</div>
+      ${statusBadge(f.status)}
+      <button class="btn btn-sm section-gap" onclick="adminViewFeedback('${esc(f.id||f.feedbackId)}')">Xử lý</button>
+    </div>`).join('')||'<div class="empty">Chưa có phản ánh.</div>';
+  }catch(e){$('adminFeedbackTable').textContent=e.message;}
+}
+
+async function adminViewFeedback(id){
+  APP.currentFeedback=id;
+  try{
+    const r=await server('FA_getFeedbackDetail',id);
+    if(!r?.success)throw new Error(r?.message||r?.error);
+    const f=r.feedback||{};
+    $('adminFeedbackDetail').innerHTML=`<div class="project-card">
+      <b>${esc(f.title||'')}</b><p>${esc(f.content||'')}</p>
+      <p class="muted small">${esc(f.email||'')}</p>${statusBadge(f.status)}
+      <div class="field"><label>Trạng thái</label>
+        <select class="select" id="fbStatus">
+          ${['Mới tiếp nhận','Đang xử lý','Đã phản hồi','Đã giải quyết','Từ chối xử lý'].map(s=>`<option ${f.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Phản hồi</label><textarea class="textarea" id="fbReply">${esc(f.reply||f.finalReply||'')}</textarea></div>
+      <button class="btn btn-primary" onclick="adminReplyFeedback()">Gửi phản hồi</button>
+      <button class="btn section-gap" onclick="adminUpdateFeedbackStatus()">Cập nhật trạng thái</button>
+      <button class="btn btn-danger section-gap" onclick="adminRejectFeedback()">Từ chối</button>
+    </div>`;
+  }catch(e){toast(e.message);}
+}
+
+async function adminReplyFeedback(){
+  try{
+    const r=await server('FA_adminReplyFeedback',APP.currentFeedback,$('fbReply').value);
+    if(!r?.success)throw new Error(r?.message||r?.error);
+    toast('Đã gửi phản hồi.');
+    try{await server('FA_ncPushNotification', (await server('FA_ncFeedbackOwnerEmail',APP.currentFeedback)), 'FEEDBACK_REPLY','Đã có phản hồi hỗ trợ','Phản ánh của bạn đã được Admin phản hồi: '+$('fbReply').value);}catch(_e){}
+    loadAdminFeedback();
+  }catch(e){toast(e.message);}
+}
+
+async function adminUpdateFeedbackStatus(){
+  try{
+    const r=await server('FA_adminUpdateFeedbackStatus',APP.currentFeedback,$('fbStatus').value);
+    if(!r?.success)throw new Error(r?.message||r?.error);
+    toast('Đã cập nhật trạng thái.');
+    loadAdminFeedback();
+  }catch(e){toast(e.message);}
+}
+
+async function adminRejectFeedback(){
+  const reason=prompt('Lý do từ chối:');
+  if(!reason)return;
+  try{
+    const r=await server('FA_adminRejectFeedback',APP.currentFeedback,reason);
+    if(!r?.success)throw new Error(r?.message||r?.error);
+    toast('Đã từ chối phản ánh.');
+    loadAdminFeedback();
+  }catch(e){toast(e.message);}
+}
+
+/* =========================================================
+   ADMIN PACKAGES / REVENUE / SECURITY
+========================================================= */
+async function loadAdminPackages(){
+  if(!APP.isAdmin)return;
+  await loadPackages();
+  $('adminPackagesTable').innerHTML=APP.packages.map(p=>`<div class="project-card section-gap">
+    <b>${esc(p.name||p.packageName||p.id)}</b>
+    <p>${esc(p.videos??p.videoCount??0)} video · ${money(p.price)}</p>
+    <p>${statusBadge(p.status||'Đang bán')}</p>
+  </div>`).join('')||'<div class="empty">Không có gói.</div>';
+}
+
+async function loadRevenue(){
+  if(!APP.isAdmin)return;
+  try{
+    const r=await server('FA_adminGetRevenueStats');
+    const s=r?.stats||r||{};
+    $('revenueStats').innerHTML=`<div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Tổng doanh thu</div><div class="stat-value">${money(s.totalRevenue||s.revenue||0)}</div></div>
+      <div class="stat-card"><div class="stat-label">Đơn đã thanh toán</div><div class="stat-value">${s.paidOrders||0}</div></div>
+      <div class="stat-card"><div class="stat-label">Tổng credit</div><div class="stat-value">${s.totalCredits||0}</div></div>
+    </div>`;
+  }catch(e){$('revenueStats').textContent=e.message;}
+}
+
+async function loadAdminSecurity(){
+  if(!APP.isAdmin)return;
+  try{
+    const [a,l]=await Promise.all([
+      server('FA_adminGetAdminEmails'),
+      server('FA_getLockedAccounts')
+    ]);
+    const emails=Array.isArray(a)?a:(a?.emails||[]);
+    const locked=Array.isArray(l)?l:(l?.accounts||[]);
+    $('adminEmailsPanel').innerHTML=`<p>${esc(emails.join(', '))}</p>`;
+    $('lockedAccountsPanel').innerHTML=locked.map(x=>`<div class="project-card section-gap">
+      <b>${esc(x.email)}</b><p>${esc(x.reason||'')}</p>
+      <button class="btn btn-success btn-sm" onclick="unlockUser('${esc(x.email)}')">Mở khóa</button>
+    </div>`).join('')||'<div class="empty">Không có tài khoản bị khóa.</div>';
+  }catch(e){
+    $('adminEmailsPanel').textContent=e.message;
+    $('lockedAccountsPanel').textContent=e.message;
+  }
+}
+
+/* ===== FILMADS notifications & customer chat client ===== */
+let FA_adminChatSelected='';
+async function loadNotifications(){const el=$('notificationList');if(!el)return;try{const data=await server('FA_ncGetMyNotifications');const list=Array.isArray(data)?data:(data?.items||[]);el.innerHTML=list.map(n=>`<div class="fa-noti-item ${n.read?'':'unread'}" onclick="markNotificationRead('${esc(n.id)}')"><b>${esc(n.title)}</b><div>${esc(n.content)}</div><small>${formatDate(n.createdAt)} · ${n.read?'Đã đọc':'Chưa đọc'}</small></div>`).join('')||'<div class="empty">Chưa có thông báo.</div>';}catch(e){el.innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function markNotificationRead(id){try{await server('FA_ncMarkRead',id);loadNotifications();}catch(e){toast(e.message)}}
+async function loadUserChat(){const el=$('userChatThread');if(!el)return;try{const r=await server('FA_ncGetChatMessages');const msgs=Array.isArray(r)?r:(r?.messages||[]);el.innerHTML=msgs.map(m=>`<div class="fa-chat-bubble ${m.sender===APP.email?'mine':''}"><div class="fa-chat-meta">${esc(m.sender||'')} · ${formatDate(m.time)}</div>${esc(m.message)}</div>`).join('')||'<div class="empty">Chưa có tin nhắn. Hãy gửi câu hỏi để được hỗ trợ.</div>';el.scrollTop=el.scrollHeight;}catch(e){el.innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function sendUserChat(){const input=$('userChatText');const msg=input.value.trim();if(!msg)return;input.disabled=true;try{await server('FA_ncSendChat',msg);input.value='';await loadUserChat();toast('Đã gửi tin nhắn.');}catch(e){toast(e.message)}finally{input.disabled=false}}
+async function loadAdminChatList(){const el=$('adminChatList');if(!el)return;try{const r=await server('FA_ncAdminChatList');const list=Array.isArray(r)?r:(r?.customers||[]);el.innerHTML=list.map(x=>`<div class="fa-chat-customer" data-chat-email="${esc(x.email)}"><b>${esc(x.email)}</b><small>${esc(x.lastMessage||'')}</small></div>`).join('')||'<div class="empty">Chưa có hội thoại.</div>';}catch(e){el.innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function openAdminChat(email){FA_adminChatSelected=email;$('adminChatTitle').textContent=email;await loadAdminChatMessages()}
+async function loadAdminChatMessages(){const el=$('adminChatThread');if(!el||!FA_adminChatSelected)return;try{const r=await server('FA_ncAdminGetChatMessages',FA_adminChatSelected);const msgs=Array.isArray(r)?r:(r?.messages||[]);el.innerHTML=msgs.map(m=>`<div class="fa-chat-bubble ${m.sender===APP.email?'mine':''}"><div class="fa-chat-meta">${esc(m.sender||'')} · ${formatDate(m.time)}</div>${esc(m.message)}</div>`).join('')||'<div class="empty">Chưa có tin nhắn.</div>';el.scrollTop=el.scrollHeight;}catch(e){el.innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function sendAdminChat(){const input=$('adminChatText');const msg=input.value.trim();if(!msg||!FA_adminChatSelected)return;input.disabled=true;try{await server('FA_ncAdminSendChat',FA_adminChatSelected,msg);input.value='';await loadAdminChatMessages();await loadAdminChatList();toast('Đã gửi trả lời.');}catch(e){toast(e.message)}finally{input.disabled=false}}
+
+/* =========================================================
+   START
+========================================================= */
+function FA_authShowGate(){document.body.classList.add('fa-logged-out');$('faAuthGate')?.classList.remove('hidden');FA_authSetMode('login');}
+function FA_authSetMode(mode){FA_AUTH_MODE=mode;$('faAuthError')?.classList.add('hidden');$('faAuthTitle').textContent=mode==='login'?'Đăng nhập':mode==='register'?'Đăng ký tài khoản':mode==='verify'?'Xác minh email':mode==='forgot'?'Quên mật khẩu':'Đặt lại mật khẩu';$('faAuthSubtitle').textContent=mode==='login'?'Đăng nhập để tiếp tục không gian sáng tạo AI.':mode==='register'?'Tạo tài khoản FilmAds AI bằng email của bạn.':mode==='verify'?'Nhập mã 6 chữ số gửi đến email.':mode==='forgot'?'Nhận mã đặt lại mật khẩu qua email.':'Nhập mã và mật khẩu mới.';
+$('faAuthPasswordWrap').classList.toggle('hidden',!['login','register'].includes(mode));$('faAuthCodeWrap').classList.toggle('hidden',!['verify','reset'].includes(mode));$('faAuthNewPasswordWrap').classList.toggle('hidden',mode!=='reset');$('faAuthSubmit').textContent=mode==='login'?'Đăng nhập':mode==='register'?'Đăng ký':mode==='verify'?'Xác minh & vào ứng dụng':mode==='forgot'?'Gửi mã':'Đổi mật khẩu';$('faAuthSwitch').classList.toggle('hidden',['verify','forgot','reset'].includes(mode));$('faAuthSwitch').textContent=mode==='login'?'Tạo tài khoản':'Đăng nhập';$('faAuthForgot').classList.toggle('hidden',mode!=='login');}
+function FA_authError(message){const e=$('faAuthError');e.textContent=message||'Có lỗi xảy ra.';e.classList.remove('hidden');}
+function FA_authClear(){const old=FA_AUTH_TOKEN;FA_AUTH_TOKEN='';localStorage.removeItem('FA_AUTH_TOKEN');if(old)server('FA_authLogout',old).catch(()=>{});}
+async function FA_authSubmit(){if(FA_AUTH_BUSY)return;FA_AUTH_BUSY=true;const btn=$('faAuthSubmit');btn.disabled=true;const email=$('faAuthEmail').value.trim().toLowerCase(),password=$('faAuthPassword').value,code=$('faAuthCode').value.trim();try{let r;if(FA_AUTH_MODE==='login')r=await server('FA_authLogin',email,password);else if(FA_AUTH_MODE==='register')r=await server('FA_authRegister',email,password);else if(FA_AUTH_MODE==='verify')r=await server('FA_authVerify',email,code);else if(FA_AUTH_MODE==='forgot')r=await server('FA_authForgot',email);else if(FA_AUTH_MODE==='reset')r=await server('FA_authReset',email,code,$('faAuthNewPassword').value);
+if(['login','verify'].includes(FA_AUTH_MODE)){FA_AUTH_TOKEN=r.token;localStorage.setItem('FA_AUTH_TOKEN',r.token);$('faAuthGate').classList.add('hidden');document.body.classList.remove('fa-logged-out');init();}else if(FA_AUTH_MODE==='register'){toast(r.message||'Đã gửi mã xác minh.');FA_authSetMode('verify');}else if(FA_AUTH_MODE==='forgot'){toast(r.message||'Đã gửi mã.');FA_authSetMode('reset');}else if(FA_AUTH_MODE==='reset'){toast(r.message||'Đổi mật khẩu thành công.');FA_authSetMode('login');}}catch(e){FA_authError(e.message||String(e));}finally{FA_AUTH_BUSY=false;btn.disabled=false;}}
+function FA_authLogoutUI(){FA_authClear();APP.email='';APP.isAdmin=false;FA_authShowGate();}
+document.addEventListener('DOMContentLoaded',()=>{ $('faAuthSubmit')?.addEventListener('click',FA_authSubmit);$('faAuthSwitch')?.addEventListener('click',()=>FA_authSetMode(FA_AUTH_MODE==='login'?'register':'login'));$('faAuthForgot')?.addEventListener('click',()=>FA_authSetMode('forgot'));$('faAuthPassword')?.addEventListener('keydown',e=>{if(e.key==='Enter')FA_authSubmit();});$('faAuthCode')?.addEventListener('keydown',e=>{if(e.key==='Enter')FA_authSubmit();});});
+document.addEventListener('DOMContentLoaded',init);
+
+</script>
