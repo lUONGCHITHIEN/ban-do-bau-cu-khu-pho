@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bản đồ số điểm bầu cử khu phố — Demo</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <main class="app">
+    <aside class="places-panel">
+      <div class="panel-heading">
+        <h1>Điểm bầu cử khu phố</h1>
+        <p>Chọn một địa điểm để xem trên bản đồ</p>
+      </div>
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Tìm khu phố hoặc điểm bầu cử…" aria-label="Tìm điểm bầu cử" />
+      </div>
+      <div class="list-meta"><span id="count">15 địa điểm mô phỏng</span><span class="demo-tag">DỮ LIỆU DEMO</span></div>
+      <ul id="place-list" class="place-list"></ul>
+    </aside>
+    <section class="map-wrap" aria-label="Bản đồ các điểm bầu cử mô phỏng">
+      <div id="map"></div>
+      <div class="map-chip"><span class="dot"></span> Điểm bầu cử mô phỏng</div>
+    </section>
+    <aside class="detail-panel" id="detail-panel">
+      <div class="detail-empty">
+        <div class="empty-icon">⌖</div>
+        <h2>Thông tin địa điểm</h2>
+        <p>Chọn một điểm trong danh sách hoặc nhấn ghim trên bản đồ để xem chi tiết.</p>
+      </div>
+    </aside>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[
+ {"id":1,"name":"Khu phố Chợ","address":"Khu vực Chợ — vị trí minh họa","lat":10.9005,"lng":106.7060,"venue":"Điểm bầu cử mô phỏng 01","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":2,"name":"Khu phố Bình Đức","address":"Khu vực Bình Đức — vị trí minh họa","lat":10.9140,"lng":106.7000,"venue":"Điểm bầu cử mô phỏng 02","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":3,"name":"Khu phố Bình Đức 1","address":"Khu vực Bình Đức 1 — vị trí minh họa","lat":10.9190,"lng":106.7080,"venue":"Điểm bầu cử mô phỏng 03","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":4,"name":"Khu phố Bình Đức 2","address":"Khu vực Bình Đức 2 — vị trí minh họa","lat":10.9230,"lng":106.7140,"venue":"Điểm bầu cử mô phỏng 04","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":5,"name":"Khu phố Bình Phước","address":"Khu vực Bình Phước — vị trí minh họa","lat":10.8970,"lng":106.7160,"venue":"Điểm bầu cử mô phỏng 05","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":6,"name":"Khu phố Bình Nhâm","address":"Khu vực Bình Nhâm — vị trí minh họa","lat":10.8870,"lng":106.7260,"venue":"Điểm bầu cử mô phỏng 06","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":7,"name":"Khu phố Bình Hòa","address":"Khu vực Bình Hòa — vị trí minh họa","lat":10.9060,"lng":106.6890,"venue":"Điểm bầu cử mô phỏng 07","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":8,"name":"Khu phố Bình Thuận","address":"Khu vực Bình Thuận — vị trí minh họa","lat":10.9090,"lng":106.7210,"venue":"Điểm bầu cử mô phỏng 08","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":9,"name":"Khu phố Hòa Long","address":"Khu vực Hòa Long — vị trí minh họa","lat":10.8810,"lng":106.7120,"venue":"Điểm bầu cử mô phỏng 09","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":10,"name":"Khu phố Long Thới","address":"Khu vực Long Thới — vị trí minh họa","lat":10.8950,"lng":106.6950,"venue":"Điểm bầu cử mô phỏng 10","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":11,"name":"Khu phố Vĩnh Phú","address":"Khu vực Vĩnh Phú — vị trí minh họa","lat":10.9300,"lng":106.6910,"venue":"Điểm bầu cử mô phỏng 11","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":12,"name":"Khu phố Tây","address":"Khu vực Tây — vị trí minh họa","lat":10.8990,"lng":106.6810,"venue":"Điểm bầu cử mô phỏng 12","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":13,"name":"Khu phố Đông Tư","address":"Khu vực Đông Tư — vị trí minh họa","lat":10.9130,"lng":106.7270,"venue":"Điểm bầu cử mô phỏng 13","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":14,"name":"Khu phố Đông Nhì","address":"Khu vực Đông Nhì — vị trí minh họa","lat":10.9040,"lng":106.7300,"venue":"Điểm bầu cử mô phỏng 14","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."},
+ {"id":15,"name":"Khu phố Nguyễn Trãi","address":"Khu vực Nguyễn Trãi — vị trí minh họa","lat":10.9060,"lng":106.7040,"venue":"Điểm bầu cử mô phỏng 15","note":"Địa điểm và tọa độ mẫu, chưa phải điểm bầu cử chính thức."}
+]
