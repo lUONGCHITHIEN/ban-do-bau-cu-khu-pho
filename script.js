@@ -1,8 +1,8 @@
 'use strict';
 
-// ========================================
-// 15 KHU PHỐ - TỌA ĐỘ
-// ========================================
+// ======================================================
+// 1. DỮ LIỆU 15 KHU PHỐ
+// ======================================================
 const points = [
   {id:1,name:'Khu phố Tây',vote:1,lat:10.876407136323156,lng:106.69612008718514},
   {id:2,name:'Khu phố Vĩnh Phú',vote:2,lat:10.885751522270438,lng:106.69662730517221},
@@ -21,33 +21,33 @@ const points = [
   {id:15,name:'Khu phố Bình Đức',vote:15,lat:10.916429322611153,lng:106.69166063900626}
 ];
 
-// ========================================
-// MÀU MARKER
-// ========================================
+// ======================================================
+// 2. MÀU ĐIỂM
+// ======================================================
 const markerColors = [
   '#087f8c','#1680d8','#42a85a','#ff9d20','#8b45b5',
   '#e44b43','#16a6c4','#ff8c00','#ed7900','#a947bd',
   '#1c8e86','#4058b9','#009c88','#925f4c','#1685db'
 ];
 
-// ========================================
-// BIẾN DÙNG CHUNG
-// ========================================
+// ======================================================
+// 3. BIẾN TOÀN CỤC
+// ======================================================
 const markers = {};
 let selectedId = null;
 let userPos = null;
 let wardBoundary = null;
 
-// ========================================
-// KHỞI TẠO BẢN ĐỒ
-// ========================================
+// ======================================================
+// 4. KHỞI TẠO BẢN ĐỒ
+// ======================================================
 const leafletMap = L.map('map', {
   zoomControl: true
 }).setView([10.9095,106.6995],13);
 
-// ========================================
-// CÁC LỚP BẢN ĐỒ
-// ========================================
+// ======================================================
+// 5. LỚP BẢN ĐỒ
+// ======================================================
 const baseLayers = {
   street: L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -74,30 +74,40 @@ const baseLayers = {
   )
 };
 
-// MẶC ĐỊNH VỆ TINH
+// Mặc định vệ tinh
 baseLayers.sat.addTo(leafletMap);
 
-// ========================================
-// ICON MARKER
-// ========================================
+// ======================================================
+// 6. TẠO ICON MARKER (ĐÃ BỔ SUNG - LỖI CŨ)
+// ======================================================
 function markerIcon(p) {
   return L.divIcon({
-    html: `
-      <div class="markerNum"
-           style="background:${markerColors[p.id-1]}">
-        ${p.vote}
-      </div>
-    `,
     className:'',
-    iconSize:[30,30],
-    iconAnchor:[15,15]
+    html:`
+      <div style="
+        width:30px;
+        height:30px;
+        border-radius:50%;
+        background:${markerColors[p.id-1]};
+        color:#fff;
+        border:3px solid white;
+        box-shadow:0 2px 7px rgba(0,0,0,.4);
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:14px;
+        font-weight:bold;
+      ">${p.vote}</div>
+    `,
+    iconSize:[36,36],
+    iconAnchor:[18,18]
   });
 }
 
-// ========================================
-// TẢI RANH GIỚI
-// Viền đỏ - tô hồng giống ảnh mẫu
-// ========================================
+// ======================================================
+// 7. RANH GIỚI OSM
+// Giữ màu vàng hiện tại như ảnh
+// ======================================================
 const boundaryUrl =
   'https://polygons.openstreetmap.fr/get_geojson.py?id=13470501&params=0';
 
@@ -106,122 +116,115 @@ async function loadWardBoundary() {
     const response = await fetch(boundaryUrl);
 
     if (!response.ok) {
-      throw new Error('HTTP ' + response.status);
+      throw new Error('HTTP '+response.status);
     }
 
     const geojson = await response.json();
 
-    wardBoundary = L.geoJSON(geojson, {
-      style: {
-        color:'#d84b50',
-        weight:3,
+    wardBoundary = L.geoJSON(geojson,{
+      style:{
+        color:'#FFD700',
+        weight:4,
         opacity:1,
-        fillColor:'#ef777d',
-        fillOpacity:0.22
+        fillColor:'#FFD700',
+        fillOpacity:0.08
       },
       interactive:false
     }).addTo(leafletMap);
 
-    // Polygon xuống dưới các marker
     wardBoundary.bringToBack();
 
-    // Chỉ zoom nếu GeoJSON có dữ liệu hợp lệ
-    if (wardBoundary.getLayers().length > 0) {
-      leafletMap.fitBounds(
-        wardBoundary.getBounds(),
-        {padding:[35,35]}
-      );
-    }
+    console.log('Đã tải ranh giới OSM');
 
-    console.log('Đã tải polygon ranh giới',geojson);
-
-  } catch (error) {
-    console.error('Lỗi tải ranh giới:',error);
-    // Không làm dừng các chức năng marker nếu tải ranh lỗi
+  } catch(error) {
+    console.error('Lỗi ranh giới:',error);
   }
 }
 
 loadWardBoundary();
 
-// ========================================
-// POPUP KHU PHỐ
-// ========================================
+// ======================================================
+// 8. POPUP
+// ======================================================
 function popupHTML(p) {
   return `
-    <div>
-      <div class="popTitle">
+    <div style="min-width:220px">
+      <div style="font-size:16px;font-weight:bold;margin-bottom:8px">
         <span style="color:${markerColors[p.id-1]}">●</span>
         ${p.name}
       </div>
 
-      <div class="popContent">
-        <div class="popRow">
-          <b>Điểm bầu cử số ${p.vote}</b>
-        </div>
-
-        <div class="popRow">
-          <b>Địa điểm:</b>
-          ${p.name}, phường Lái Thiêu
-        </div>
-
-        <div class="popRow">
-          <b>GPS:</b>
-          ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}
-        </div>
-
-        <a class="directions"
-           target="_blank"
-           rel="noopener"
-           href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}">
-          📍 Chỉ đường Google Maps
-        </a>
+      <div style="margin-bottom:6px">
+        <b>Điểm bầu cử số ${p.vote}</b>
       </div>
+
+      <div style="margin-bottom:6px">
+        <b>Địa điểm:</b> ${p.name}, phường Lái Thiêu
+      </div>
+
+      <div style="font-size:12px;margin-bottom:8px">
+        <b>GPS:</b> ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}
+      </div>
+
+      <a target="_blank" rel="noopener"
+         href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}"
+         style="
+           display:inline-block;
+           background:#1765bd;
+           color:white;
+           padding:8px 12px;
+           border-radius:6px;
+           text-decoration:none;
+         ">
+        📍 Chỉ đường Google Maps
+      </a>
     </div>
   `;
 }
 
-// ========================================
-// TẠO MARKER 15 KHU PHỐ
-// ========================================
+// ======================================================
+// 9. TẠO 15 MARKER
+// ======================================================
 points.forEach(p => {
-  const marker = L.marker([p.lat,p.lng], {
+  const marker = L.marker([p.lat,p.lng],{
     icon:markerIcon(p),
     zIndexOffset:1000
   }).addTo(leafletMap);
 
   marker.bindPopup(popupHTML(p));
 
-  marker.on('click',() => {
+  marker.on('click',()=>{
     selectPoint(p,false);
   });
 
   markers[p.id] = marker;
 });
 
-// ========================================
-// TÍNH KHOẢNG CÁCH
-// ========================================
+// ======================================================
+// 10. TÍNH KHOẢNG CÁCH GPS
+// ======================================================
 function distKm(a,b) {
-  const rad = Math.PI/180;
-  const R = 6371;
+  const rad=Math.PI/180;
+  const R=6371;
 
-  const dLat = (b.lat-a.lat)*rad;
-  const dLng = (b.lng-a.lng)*rad;
+  const dLat=(b.lat-a.lat)*rad;
+  const dLng=(b.lng-a.lng)*rad;
 
-  const h =
-    Math.sin(dLat/2)**2 +
-    Math.cos(a.lat*rad) *
-    Math.cos(b.lat*rad) *
+  const h=
+    Math.sin(dLat/2)**2+
+    Math.cos(a.lat*rad)*
+    Math.cos(b.lat*rad)*
     Math.sin(dLng/2)**2;
 
   return 2*R*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));
 }
 
-// ========================================
-// CHỌN KHU PHỐ
-// ========================================
+// ======================================================
+// 11. CLICK KHU PHỐ
+// ======================================================
 function selectPoint(p,openPopup=true) {
-  selectedId = p.id;
+  selectedId=p.id;
+
   renderList();
 
   leafletMap.flyTo(
@@ -230,125 +233,195 @@ function selectPoint(p,openPopup=true) {
     {duration:0.9}
   );
 
-  if (openPopup) {
-    setTimeout(() => {
-      markers[p.id]?.openPopup();
+  if(openPopup) {
+    setTimeout(()=>{
+      if(markers[p.id]) markers[p.id].openPopup();
     },500);
   }
 }
 
-// ========================================
-// HIỂN THỊ DANH SÁCH
-// ========================================
+// ======================================================
+// 12. HIỂN THỊ DANH SÁCH (ĐÃ FIX)
+// ======================================================
 function renderList() {
-  const searchEl = document.getElementById('search');
-  const countEl = document.getElementById('count');
-  const listEl = document.getElementById('list');
+  const searchEl=document.getElementById('search');
+  const countEl=document.getElementById('count');
+  const listEl=document.getElementById('list');
 
-  if (!searchEl || !countEl || !listEl) return;
+  if(!searchEl||!countEl||!listEl) {
+    console.error('HTML thiếu #search, #count hoặc #list');
+    return;
+  }
 
-  const query = searchEl.value
-    .trim()
-    .toLocaleLowerCase('vi');
+  // ÉP VÙNG DANH SÁCH HIỂN THỊ
+  listEl.style.display='block';
+  listEl.style.visibility='visible';
+  listEl.style.opacity='1';
+  listEl.style.overflowY='auto';
+  listEl.style.flex='1';
+  listEl.style.minHeight='0';
 
-  const active =
+  const query=searchEl.value.trim().toLocaleLowerCase('vi');
+
+  const active=
     document.querySelector('.filters button.active')
-      ?.dataset.filter || 'all';
+      ?.dataset.filter||'all';
 
-  let items = points.filter(p =>
+  let items=points.filter(p =>
     p.name.toLocaleLowerCase('vi').includes(query)
   );
 
-  if (active === 'coords') {
-    items = items.filter(p =>
-      Number.isFinite(p.lat) &&
-      Number.isFinite(p.lng)
+  if(active==='coords') {
+    items=items.filter(p =>
+      Number.isFinite(p.lat)&&Number.isFinite(p.lng)
     );
   }
 
-  if (active === 'near' && userPos) {
-    items.sort((a,b) =>
+  if(active==='near'&&userPos) {
+    items.sort((a,b)=>
       distKm(a,userPos)-distKm(b,userPos)
     );
   }
 
-  countEl.textContent = items.length;
+  countEl.textContent=items.length;
 
-  listEl.innerHTML = items.map(p => `
-    <div class="place ${selectedId===p.id?'selected':''}"
+  // Không tìm thấy
+  if(items.length===0) {
+    listEl.innerHTML=`
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#666;
+      ">
+        Không tìm thấy khu phố
+      </div>
+    `;
+    return;
+  }
+
+  // VẼ DANH SÁCH
+  listEl.innerHTML=items.map(p=>`
+    <div class="place"
          data-id="${p.id}"
-         tabindex="0">
+         tabindex="0"
+         style="
+           display:flex;
+           align-items:center;
+           gap:10px;
+           padding:10px;
+           margin:0 0 8px;
+           background:${selectedId===p.id?'#e6f1ff':'#ffffff'};
+           border:1px solid ${selectedId===p.id?'#1765bd':'#d7e1ed'};
+           border-radius:10px;
+           cursor:pointer;
+           box-sizing:border-box;
+           width:100%;
+         ">
 
-      <span class="placeDot"
-            style="background:${markerColors[p.id-1]}">
-      </span>
+      <div style="
+        width:34px;
+        height:34px;
+        min-width:34px;
+        border-radius:50%;
+        background:${markerColors[p.id-1]};
+        color:white;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:bold;
+        border:2px solid white;
+        box-shadow:0 0 0 1px #ccc;
+      ">
+        ${p.vote}
+      </div>
 
-      <div class="placeText">
-        <div class="placeName">${p.name}</div>
-        <div class="placeMeta">
-          Điểm ${p.vote} ·
-          ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}
+      <div style="flex:1;min-width:0;">
+        <div style="
+          font-size:14px;
+          font-weight:bold;
+          color:#19375d;
+          line-height:1.4;
+        ">
+          ${p.name}
+        </div>
+
+        <div style="
+          font-size:11px;
+          color:#1765bd;
+          margin-top:3px;
+        ">
+          Điểm bầu cử ${p.vote}
+        </div>
+
+        <div style="
+          font-size:10px;
+          color:#7b8796;
+          margin-top:3px;
+        ">
+          ${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}
         </div>
       </div>
 
+      <div style="color:#789;font-size:20px;">›</div>
     </div>
   `).join('');
 
-  listEl.querySelectorAll('.place').forEach(el => {
-    const go = () => {
-      const p = points.find(
-        x => x.id === Number(el.dataset.id)
-      );
-      if (p) selectPoint(p,true);
+  // SỰ KIỆN CLICK
+  listEl.querySelectorAll('.place').forEach(el=>{
+    const go=()=>{
+      const id=Number(el.dataset.id);
+      const p=points.find(x=>x.id===id);
+      if(p) selectPoint(p,true);
     };
 
     el.addEventListener('click',go);
 
-    el.addEventListener('keydown',e => {
-      if (e.key === 'Enter' || e.key === ' ') {
+    el.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' ') {
         e.preventDefault();
         go();
       }
     });
   });
+
+  console.log('Danh sách đã hiển thị:',items.length);
 }
 
-// RENDER BAN ĐẦU
+// Chạy hiển thị ngay
 renderList();
 
-// ========================================
-// TÌM KIẾM
-// ========================================
+// ======================================================
+// 13. TÌM KIẾM
+// ======================================================
 document.getElementById('search')
   ?.addEventListener('input',renderList);
 
-// ========================================
-// BỘ LỌC
-// ========================================
+// ======================================================
+// 14. BỘ LỌC
+// ======================================================
 document.querySelectorAll('.filters button')
-  .forEach(btn => {
-    btn.addEventListener('click',() => {
-
+  .forEach(btn=>{
+    btn.addEventListener('click',()=>{
       document.querySelectorAll('.filters button')
-        .forEach(b => b.classList.remove('active'));
+        .forEach(b=>b.classList.remove('active'));
 
       btn.classList.add('active');
 
-      if (btn.dataset.filter === 'near') {
-        if (!navigator.geolocation) {
+      if(btn.dataset.filter==='near') {
+        if(!navigator.geolocation) {
           alert('Trình duyệt không hỗ trợ GPS');
           return;
         }
 
         navigator.geolocation.getCurrentPosition(
-          pos => {
-            userPos = {
+          pos=>{
+            userPos={
               lat:pos.coords.latitude,
               lng:pos.coords.longitude
             };
             renderList();
           },
-          () => {
+          ()=>{
             alert('Không lấy được vị trí. Hãy cấp quyền GPS.');
           },
           {
@@ -362,48 +435,48 @@ document.querySelectorAll('.filters button')
     });
   });
 
-// ========================================
-// CHUYỂN LỚP BẢN ĐỒ
-// ========================================
+// ======================================================
+// 15. CHUYỂN LỚP BẢN ĐỒ
+// ======================================================
 document.querySelectorAll('#mapControls button')
-  .forEach(btn => {
-    btn.addEventListener('click',() => {
-
+  .forEach(btn=>{
+    btn.addEventListener('click',()=>{
       document.querySelectorAll('#mapControls button')
-        .forEach(b => b.classList.remove('active'));
+        .forEach(b=>b.classList.remove('active'));
 
       btn.classList.add('active');
 
-      Object.values(baseLayers).forEach(layer => {
-        if (leafletMap.hasLayer(layer)) {
+      Object.values(baseLayers).forEach(layer=>{
+        if(leafletMap.hasLayer(layer)) {
           leafletMap.removeLayer(layer);
         }
       });
 
-      baseLayers[btn.dataset.layer]?.addTo(leafletMap);
+      const layer=baseLayers[btn.dataset.layer];
+      if(layer) layer.addTo(leafletMap);
     });
   });
 
-// ========================================
-// THU GỌN / MỞ DANH SÁCH
-// ========================================
-const sidebar = document.getElementById('sidebar');
-const toggle = document.getElementById('sidebarToggle');
-const openSidebar = document.getElementById('sidebarOpen');
+// ======================================================
+// 16. THU GỌN / MỞ DANH SÁCH
+// ======================================================
+const sidebar=document.getElementById('sidebar');
+const toggle=document.getElementById('sidebarToggle');
+const openSidebar=document.getElementById('sidebarOpen');
 
 function syncMap() {
-  setTimeout(() => {
+  setTimeout(()=>{
     leafletMap.invalidateSize();
-  },300);
+  },350);
 }
 
 function collapse() {
   sidebar?.classList.add('closed');
   openSidebar?.classList.add('visible');
 
-  if (toggle) {
-    toggle.textContent = '›';
-    toggle.title = 'Mở danh sách';
+  if(toggle) {
+    toggle.textContent='›';
+    toggle.title='Mở danh sách';
     toggle.setAttribute('aria-label','Mở danh sách');
   }
 
@@ -414,34 +487,36 @@ function expand() {
   sidebar?.classList.remove('closed');
   openSidebar?.classList.remove('visible');
 
-  if (toggle) {
-    toggle.textContent = '‹';
-    toggle.title = 'Thu gọn danh sách';
+  if(toggle) {
+    toggle.textContent='‹';
+    toggle.title='Thu gọn danh sách';
     toggle.setAttribute('aria-label','Thu gọn danh sách');
   }
 
   syncMap();
 }
 
-if (toggle) {
-  toggle.addEventListener('click',() => {
-    if (sidebar?.classList.contains('closed')) {
-      expand();
-    } else {
-      collapse();
-    }
-  });
-}
+toggle?.addEventListener('click',()=>{
+  if(sidebar?.classList.contains('closed')) {
+    expand();
+  } else {
+    collapse();
+  }
+});
 
-if (openSidebar) {
-  openSidebar.addEventListener('click',expand);
-}
+openSidebar?.addEventListener('click',expand);
 
-// ========================================
-// CĂN CHỈNH MAP KHI ĐỔI KÍCH THƯỚC
-// ========================================
-window.addEventListener('resize',() => {
+// ======================================================
+// 17. RESIZE
+// ======================================================
+window.addEventListener('resize',()=>{
   leafletMap.invalidateSize();
 });
 
 syncMap();
+
+// ======================================================
+// 18. KIỂM TRA
+// ======================================================
+console.log('Bản đồ 15 khu phố đã khởi tạo.');
+console.log('Marker:',Object.keys(markers).length);
