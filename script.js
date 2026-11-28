@@ -520,3 +520,26 @@ syncMap();
 // ======================================================
 console.log('Bản đồ 15 khu phố đã khởi tạo.');
 console.log('Marker:',Object.keys(markers).length);
+#sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+#list {
+  display: block !important;
+  flex: 1 1 auto !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 200px !important;
+  overflow-y: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+}
+
+#list .place {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
