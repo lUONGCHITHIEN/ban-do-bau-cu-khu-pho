@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="vi">
 <head>
@@ -9,6 +8,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
+
 <header id="header">
   <div class="brand">LT</div>
   <div class="headtext">
@@ -18,13 +18,24 @@
 </header>
 
 <main id="main">
+
   <aside id="sidebar">
     <section class="sidebarTop">
       <div class="stats">
-        <div class="stat"><strong id="pointTotal">15</strong><span>Điểm bản đồ</span></div>
-        <div class="stat"><strong id="wardTotal">15</strong><span>Khu phố</span></div>
+        <div class="stat">
+          <strong id="pointTotal">15</strong>
+          <span>Điểm bản đồ</span>
+        </div>
+        <div class="stat">
+          <strong id="wardTotal">15</strong>
+          <span>Khu phố</span>
+        </div>
       </div>
-      <input id="search" type="search" placeholder="Tìm khu phố..." autocomplete="off">
+
+      <input id="search" type="search"
+        placeholder="Tìm khu phố..."
+        autocomplete="off">
+
       <div class="filters">
         <button class="active" data-filter="all">Tất cả</button>
         <button data-filter="coords">Có tọa độ</button>
@@ -32,20 +43,36 @@
       </div>
     </section>
 
-    <div class="listHeading">DANH SÁCH KHU PHỐ (<span id="count">15</span>)</div>
+    <div class="listHeading">
+      DANH SÁCH KHU PHỐ (<span id="count">15</span>)
+    </div>
+
     <div id="list" aria-live="polite"></div>
-    <button id="sidebarToggle" type="button" aria-label="Thu gọn danh sách">‹</button>
+
+    <!-- NÚT THU GỌN -->
+    <button id="sidebarToggle"
+      type="button"
+      aria-label="Thu gọn danh sách"
+      title="Thu gọn danh sách">‹</button>
   </aside>
 
   <section id="mapWrap">
-    <button id="sidebarOpen" type="button">☰ Danh sách</button>
+
+    <!-- NÚT MỞ DANH SÁCH KHI ĐÃ THU GỌN -->
+    <button id="sidebarOpen"
+      type="button"
+      aria-label="Mở danh sách khu phố"
+      title="Mở danh sách">☰ Danh sách</button>
+
     <div id="mapControls">
       <button data-layer="street">Bản đồ</button>
       <button data-layer="sat" class="active">Vệ tinh</button>
       <button data-layer="terrain">Địa hình</button>
     </div>
+
     <div id="map"></div>
   </section>
+
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
