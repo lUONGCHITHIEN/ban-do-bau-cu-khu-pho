@@ -313,87 +313,55 @@ function renderList() {
   });
 }
 
-function renderList() {
-  const searchEl = document.getElementById('search');
-  const countEl = document.getElementById('count');
-  const listEl = document.getElementById('list');
+// RENDER BAN ĐẦU
+renderList();
 
-  if (!searchEl || !countEl || !listEl) {
-    console.error('Thiếu HTML search/count/list');
-    return;
-  }
+// ========================================
+// TÌM KIẾM
+// ========================================
+document.getElementById('search')
+  ?.addEventListener('input',renderList);
 
-  const query = searchEl.value.trim().toLocaleLowerCase('vi');
+// ========================================
+// BỘ LỌC
+// ========================================
+document.querySelectorAll('.filters button')
+  .forEach(btn => {
+    btn.addEventListener('click',() => {
 
-  const active =
-    document.querySelector('.filters button.active')?.dataset.filter || 'all';
+      document.querySelectorAll('.filters button')
+        .forEach(b => b.classList.remove('active'));
 
-  let items = points.filter(p =>
-    p.name.toLocaleLowerCase('vi').includes(query)
-  );
+      btn.classList.add('active');
 
-  if (active === 'coords') {
-    items = items.filter(p =>
-      Number.isFinite(p.lat) && Number.isFinite(p.lng)
-    );
-  }
+      if (btn.dataset.filter === 'near') {
+        if (!navigator.geolocation) {
+          alert('Trình duyệt không hỗ trợ GPS');
+          return;
+        }
 
-  if (active === 'near' && userPos) {
-    items.sort((a, b) => distKm(a, userPos) - distKm(b, userPos));
-  }
-
-  countEl.textContent = items.length;
-
-  if (items.length === 0) {
-    listEl.innerHTML = `
-      <div class="emptyList">
-        Không tìm thấy khu phố.
-      </div>
-    `;
-    return;
-  }
-
-  listEl.innerHTML = items.map(p => `
-    <div class="place ${selectedId === p.id ? 'selected' : ''}"
-         data-id="${p.id}"
-         tabindex="0">
-
-      <div class="placeDot"
-           style="background:${markerColors[p.id - 1]}">
-      </div>
-
-      <div class="placeText">
-        <div class="placeName">${p.name}</div>
-        <div class="placeMeta">
-          <span class="pointBadge">Điểm ${p.vote}</span>
-          <span class="coordinates">
-            ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}
-          </span>
-        </div>
-      </div>
-
-      <div class="placeArrow">›</div>
-    </div>
-  `).join('');
-
-  listEl.querySelectorAll('.place').forEach(el => {
-    const go = () => {
-      const p = points.find(x => x.id === Number(el.dataset.id));
-      if (p) selectPoint(p, true);
-    };
-
-    el.addEventListener('click', go);
-
-    el.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        go();
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            userPos = {
+              lat:pos.coords.latitude,
+              lng:pos.coords.longitude
+            };
+            renderList();
+          },
+          () => {
+            alert('Không lấy được vị trí. Hãy cấp quyền GPS.');
+          },
+          {
+            enableHighAccuracy:true,
+            timeout:12000
+          }
+        );
       }
+
+      renderList();
     });
   });
 
-  console.log('Đã render danh sách:', items.length);
-}
 // ========================================
 // CHUYỂN LỚP BẢN ĐỒ
 // ========================================
@@ -477,102 +445,3 @@ window.addEventListener('resize',() => {
 });
 
 syncMap();
-/* ===== FIX DANH SÁCH 15 KHU PHỐ ===== */
-
-#sidebar {
-  background: #ffffff !important;
-}
-
-#list {
-  display: block !important;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto !important;
-  overflow-x: hidden;
-  padding: 8px !important;
-  background: #f5f8fc;
-}
-
-#list .place {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: 100%;
-  min-height: 65px;
-  align-items: center;
-  gap: 10px;
-  padding: 10px !important;
-  margin: 0 0 7px !important;
-  background: #ffffff !important;
-  color: #19375d !important;
-  border: 1px solid #d5e1ef !important;
-  border-radius: 10px !important;
-  cursor: pointer;
-}
-
-#list .place:hover {
-  background: #edf5ff !important;
-  border-color: #4387d5 !important;
-}
-
-#list .place.selected {
-  background: #e6f1ff !important;
-  border: 1px solid #1765bd !important;
-}
-
-#list .placeDot {
-  display: block !important;
-  width: 16px !important;
-  height: 16px !important;
-  min-width: 16px !important;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 0 0 1px #aab8c9;
-}
-
-#list .placeText {
-  display: block !important;
-  flex: 1;
-  min-width: 0;
-  color: #19375d !important;
-}
-
-#list .placeName {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  color: #19375d !important;
-  font-size: 16px !important;
-  font-weight: bold;
-}
-
-#list .placeMeta {
-  display: flex !important;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: 4px;
-  color: #64758b !important;
-  font-size: 11px !important;
-}
-
-#list .pointBadge {
-  color: #1765bd !important;
-  font-weight: bold;
-}
-
-#list .coordinates {
-  color: #78879a !important;
-  font-size: 10px;
-}
-
-#list .placeArrow {
-  display: block !important;
-  color: #8ba2bc;
-  font-size: 22px;
-}
-
-#list .emptyList {
-  padding: 20px;
-  text-align: center;
-  color: #64758b;
-}
