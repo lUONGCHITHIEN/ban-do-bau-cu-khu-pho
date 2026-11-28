@@ -1,72 +1,400 @@
+* {
+  box-sizing: border-box;
+}
 
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;width:100%;font-family:"Times New Roman",serif;color:#19375d}
-body{overflow:hidden;background:#e9eff6}
+html, body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-family: "Times New Roman", serif;
+  color: #19375d;
+}
 
-#header{height:72px;background:#1762b5;color:#fff;display:flex;align-items:center;padding:10px 18px;gap:12px;position:relative;z-index:10;box-shadow:0 2px 8px #0002}
-.brand{height:44px;width:44px;border-radius:50%;background:white;color:#1762b5;font-weight:bold;font-size:18px;display:grid;place-items:center}
-.headtext .eyebrow{font-size:12px;font-weight:bold}
-.headtext h1{margin:2px 0 0;font-size:23px}
+body {
+  overflow: hidden;
+  background: #e9eff6;
+}
 
-#main{height:calc(100% - 72px);display:flex;min-height:0}
-#sidebar{width:300px;min-width:300px;background:#fff;border-right:1px solid #cddced;display:flex;flex-direction:column;position:relative;z-index:500;transition:width .22s,min-width .22s}
-#sidebar.closed{width:0;min-width:0;border:0;overflow:visible}
-#sidebar.closed .sidebarTop,#sidebar.closed .listHeading,#sidebar.closed #list{display:none}
+/* HEADER */
+#header {
+  height: 72px;
+  background: #1762b5;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 10px 18px;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 8px #0002;
+}
 
-.sidebarTop{padding:10px}
-.stats{display:flex;gap:8px}
-.stat{flex:1;border:1px solid #d6e5f8;background:#f3f8ff;border-radius:11px;padding:7px 9px}
-.stat strong{display:block;font-size:22px;color:#1766bd}
-.stat span{font-size:12px}
+.brand {
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  background: white;
+  color: #1762b5;
+  font-weight: bold;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+}
 
-#search{width:100%;height:38px;margin-top:9px;border:1px solid #ccdaeb;border-radius:9px;padding:0 10px;font:15px "Times New Roman",serif;outline:none}
-#search:focus{border-color:#4387d5;box-shadow:0 0 0 2px #4387d522}
+.headtext .eyebrow {
+  font-size: 12px;
+  font-weight: bold;
+}
 
-.filters{display:flex;gap:5px;margin-top:8px}
-.filters button{flex:1;padding:7px 4px;border:1px solid #d3e0f0;background:#f5f8fc;border-radius:8px;font:14px "Times New Roman",serif;cursor:pointer}
-.filters button.active{background:#1765bd;color:white;border-color:#1765bd}
+.headtext h1 {
+  margin: 2px 0 0;
+  font-size: 23px;
+}
 
-.listHeading{font-weight:bold;padding:9px 10px;border-bottom:1px solid #dce6f2;font-size:14px}
-#list{overflow:auto;flex:1;padding:7px}
+/* LAYOUT */
+#main {
+  height: calc(100% - 72px);
+  display: flex;
+  min-height: 0;
+}
 
-.place{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #dbe5f0;border-radius:10px;margin-bottom:6px;cursor:pointer;background:white}
-.place:hover{background:#f4f8ff;border-color:#8cb6e8}
-.place.selected{background:#edf5ff;border-color:#2678d0}
-.placeDot{width:12px;height:12px;border-radius:50%;flex:none;border:1px solid #fff;box-shadow:0 0 0 1px #999}
-.placeName{font-weight:bold;font-size:15px}
-.placeMeta{font-size:12px;color:#61768e;margin-top:3px}
+/* SIDEBAR */
+#sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: #fff;
+  border-right: 1px solid #cddced;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 500;
+  transition: width .22s, min-width .22s;
+}
 
-#sidebarToggle{position:absolute;top:50%;right:-30px;transform:translateY(-50%);width:30px;height:62px;border:1px solid white;border-radius:0 9px 9px 0;background:#1765bd;color:white;font-size:22px;cursor:pointer;z-index:1200;box-shadow:2px 2px 8px #0003}
+#sidebar.closed {
+  width: 0;
+  min-width: 0;
+  border: 0;
+  overflow: visible;
+}
 
-#mapWrap{flex:1;min-width:0;position:relative}
-#map{width:100%;height:100%}
+#sidebar.closed .sidebarTop,
+#sidebar.closed .listHeading,
+#sidebar.closed #list {
+  display: none;
+}
 
-#mapControls{position:absolute;right:12px;top:12px;z-index:1000;display:flex;gap:3px;padding:5px;background:white;border-radius:11px;box-shadow:0 2px 10px #0002}
-#mapControls button{border:0;border-radius:7px;background:white;padding:8px 10px;font:14px "Times New Roman",serif;cursor:pointer}
-#mapControls button.active{background:#1765bd;color:white}
+/* SIDEBAR TOP */
+.sidebarTop {
+  padding: 10px;
+}
 
-#sidebarOpen{display:none;position:absolute;left:12px;top:12px;z-index:1000;border:0;background:#1765bd;color:white;padding:10px 12px;border-radius:8px;cursor:pointer;font:14px "Times New Roman",serif}
-#sidebar.closed~#mapWrap #sidebarOpen{display:block}
+.stats {
+  display: flex;
+  gap: 8px;
+}
 
-.markerNum{height:30px;width:30px;border-radius:50%;border:3px solid white;color:white;display:grid;place-items:center;font-weight:bold;font-size:14px;box-shadow:0 2px 6px #0004}
+.stat {
+  flex: 1;
+  border: 1px solid #d6e5f8;
+  background: #f3f8ff;
+  border-radius: 11px;
+  padding: 7px 9px;
+}
 
-.leaflet-popup-content-wrapper{border-radius:12px!important;padding:0!important;overflow:hidden}
-.leaflet-popup-content{margin:0!important;width:260px!important}
-.popTitle{padding:12px;background:#edf5ff;font-size:17px;font-weight:bold;border-bottom:1px solid #d7e6f7}
-.popContent{padding:12px}
-.popRow{font-size:14px;line-height:1.5;padding:7px 0;border-bottom:1px solid #edf1f6}
-.directions{display:block;text-align:center;background:#1765bd;color:white!important;text-decoration:none;padding:10px;border-radius:8px;margin-top:10px;font-weight:bold}
-.directions:hover{background:#0d4d99}
+.stat strong {
+  display: block;
+  font-size: 22px;
+  color: #1766bd;
+}
 
-@media(max-width:680px){
-  #header{height:64px;padding:8px 10px}
-  .headtext h1{font-size:17px}
-  .headtext .eyebrow{font-size:10px}
-  #main{height:calc(100% - 64px)}
-  #sidebar{width:255px;min-width:255px}
-  #sidebar.closed{width:0;min-width:0}
-  #mapControls{right:5px;top:5px}
-  #mapControls button{font-size:12px;padding:7px 6px}
-  .place{padding:8px}
-  .leaflet-popup-content{width:240px!important}
+.stat span {
+  font-size: 12px;
+}
+
+#search {
+  width: 100%;
+  height: 38px;
+  margin-top: 9px;
+  border: 1px solid #ccdaeb;
+  border-radius: 9px;
+  padding: 0 10px;
+  font: 15px "Times New Roman", serif;
+  outline: none;
+}
+
+#search:focus {
+  border-color: #4387d5;
+  box-shadow: 0 0 0 2px #4387d522;
+}
+
+/* FILTER */
+.filters {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.filters button {
+  flex: 1;
+  padding: 7px 4px;
+  border: 1px solid #d3e0f0;
+  background: #f5f8fc;
+  border-radius: 8px;
+  font: 14px "Times New Roman", serif;
+  cursor: pointer;
+}
+
+.filters button.active {
+  background: #1765bd;
+  color: white;
+  border-color: #1765bd;
+}
+
+/* LIST */
+.listHeading {
+  font-weight: bold;
+  padding: 9px 10px;
+  border-bottom: 1px solid #dce6f2;
+  font-size: 14px;
+}
+
+#list {
+  overflow: auto;
+  flex: 1;
+  padding: 7px;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid #dbe5f0;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  background: white;
+}
+
+.place:hover {
+  background: #f4f8ff;
+  border-color: #8cb6e8;
+}
+
+.place.selected {
+  background: #edf5ff;
+  border-color: #2678d0;
+}
+
+.placeDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: none;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 1px #999;
+}
+
+.placeName {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.placeMeta {
+  font-size: 12px;
+  color: #61768e;
+  margin-top: 3px;
+}
+
+/* NÚT THU GỌN SIDEBAR */
+#sidebarToggle {
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 62px;
+  border: 1px solid white;
+  border-radius: 0 9px 9px 0;
+  background: #1765bd;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1500;
+  box-shadow: 2px 2px 8px #0003;
+  display: block;
+}
+
+/* MAP */
+#mapWrap {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* MAP CONTROLS */
+#mapControls {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 1000;
+  display: flex;
+  gap: 3px;
+  padding: 5px;
+  background: white;
+  border-radius: 11px;
+  box-shadow: 0 2px 10px #0002;
+}
+
+#mapControls button {
+  border: 0;
+  border-radius: 7px;
+  background: white;
+  padding: 8px 10px;
+  font: 14px "Times New Roman", serif;
+  cursor: pointer;
+}
+
+#mapControls button.active {
+  background: #1765bd;
+  color: white;
+}
+
+/* NÚT MỞ DANH SÁCH */
+#sidebarOpen {
+  display: none;
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 1000;
+  border: 0;
+  background: #1765bd;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: 14px "Times New Roman", serif;
+}
+
+#sidebarOpen.visible {
+  display: block;
+}
+
+/* MARKER */
+.markerNum {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  border: 3px solid white;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 6px #0004;
+}
+
+/* POPUP */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: 260px !important;
+}
+
+.popTitle {
+  padding: 12px;
+  background: #edf5ff;
+  font-size: 17px;
+  font-weight: bold;
+  border-bottom: 1px solid #d7e6f7;
+}
+
+.popContent {
+  padding: 12px;
+}
+
+.popRow {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 7px 0;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.directions {
+  display: block;
+  text-align: center;
+  background: #1765bd;
+  color: white !important;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.directions:hover {
+  background: #0d4d99;
+}
+
+/* MOBILE */
+@media (max-width: 680px) {
+  #header {
+    height: 64px;
+    padding: 8px 10px;
+  }
+
+  .headtext h1 {
+    font-size: 17px;
+  }
+
+  .headtext .eyebrow {
+    font-size: 10px;
+  }
+
+  #main {
+    height: calc(100% - 64px);
+  }
+
+  #sidebar {
+    width: 255px;
+    min-width: 255px;
+  }
+
+  #sidebar.closed {
+    width: 0;
+    min-width: 0;
+  }
+
+  #sidebarToggle {
+    right: -30px;
+  }
+
+  #mapControls {
+    right: 5px;
+    top: 5px;
+  }
+
+  #mapControls button {
+    font-size: 12px;
+    padding: 7px 6px;
+  }
+
+  .place {
+    padding: 8px;
+  }
+
+  .leaflet-popup-content {
+    width: 240px !important;
+  }
 }
