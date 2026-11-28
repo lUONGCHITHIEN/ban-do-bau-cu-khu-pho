@@ -48,13 +48,6 @@ async function loadLaiThieuBoundary() {
         features: features
       },
       {
-        style: {
-          color: "#FFD700",
-          weight: 3,
-          opacity: 1,
-          fill: false,
-          fillOpacity: 0
-        },
         interactive: false
       }
     ).addTo(map);
