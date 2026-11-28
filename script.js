@@ -545,3 +545,10 @@ window.addEventListener("resize", function () {
    - Không tạo polygon 5 điểm
    - Không hiện boundaryStatus
    ========================================== */
+style: {
+  color: "#FFD700",
+  weight: 3,
+  opacity: 1,
+  fill: false,
+  fillOpacity: 0
+}
