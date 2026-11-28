@@ -59,22 +59,55 @@ const baseLayers = {
 // MẶC ĐỊNH HIỂN THỊ VỆ TINH
 baseLayers.sat.addTo(leafletMap);
 
-// Không sử dụng polygon giả.
-// Chỉ thêm ranh giới khi có dữ liệu GeoJSON chính xác.
+// ================================
+// LẤY RANH GIỚI OSM RELATION
+// RELATION ID: 13470501
+// ================================
 
-const markers = {};
-let selectedId = null;
-let userPos = null;
+const boundaryUrl =
+  'https://polygons.openstreetmap.fr/get_geojson.py?id=13470501&params=0';
 
-// TẠO ICON MARKER
-function markerIcon(p) {
-  return L.divIcon({
-    html: `<div class="markerNum" style="background:${markerColors[p.id-1]}">${p.vote}</div>`,
-    className: '',
-    iconSize: [30,30],
-    iconAnchor: [15,15]
-  });
+let wardBoundary = null;
+
+async function loadWardBoundary() {
+  try {
+    const response = await fetch(boundaryUrl);
+
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+
+    const geojson = await response.json();
+
+    wardBoundary = L.geoJSON(geojson, {
+      style: {
+        color: '#FFD700',
+        weight: 4,
+        opacity: 1,
+        fillColor: '#FFD700',
+        fillOpacity: 0.08
+      },
+      interactive: false
+    }).addTo(leafletMap);
+
+    // Zoom theo ranh giới lấy được
+    leafletMap.fitBounds(wardBoundary.getBounds(), {
+      padding: [35, 35]
+    });
+
+    console.log('Đã tải ranh giới OSM:', geojson);
+
+  } catch (error) {
+    console.error('Không tải được ranh giới:', error);
+
+    alert(
+      'Không tải được dữ liệu ranh giới. ' +
+      'Kiểm tra kết nối hoặc nguồn GeoJSON.'
+    );
+  }
 }
+
+loadWardBoundary();
 
 // NỘI DUNG POPUP
 function popupHTML(p) {
