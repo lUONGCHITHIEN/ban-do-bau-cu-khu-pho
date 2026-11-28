@@ -1,25 +1,4 @@
-
 {
   "type": "FeatureCollection",
-  "name": "Ranh tham khảo - hull GPS 15 điểm (KHÔNG phải ranh hành chính chuẩn)",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Địa bàn Lái Thiêu (ranh tham khảo)",
-        "type": "Tạm dựng từ GPS 15 điểm, không phải ranh hành chính chính thức"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [106.69612008718514,10.876407136323156],
-          [106.68535404001115,10.925924886793004],
-          [106.69985178855553,10.934938506778733],
-          [106.71109283788044,10.918472457880995],
-          [106.7083366614026,10.907390927850985],
-          [106.69612008718514,10.876407136323156]
-        ]]
-      }
-    }
-  ]
+  "features": []
 }
